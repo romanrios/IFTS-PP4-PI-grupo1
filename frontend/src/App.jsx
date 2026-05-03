@@ -6,12 +6,10 @@ function App() {
 
   useEffect(() => {
     axios
-      .get(process.env.REACT_APP_API_URL)
+      .get(import.meta.env.VITE_API_URL)
       .then((res) => setMensaje(res.data))
       .catch((err) => console.log(err));
   }, []);
-
-  console.log("API URL:", process.env.REACT_APP_API_URL);
 
   return (
     <div className="app">
