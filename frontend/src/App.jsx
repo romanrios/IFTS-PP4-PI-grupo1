@@ -6,7 +6,7 @@ function App() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:5000")
+      .get(process.env.REACT_APP_API_URL)
       .then((res) => setMensaje(res.data))
       .catch((err) => console.log(err));
   }, []);
