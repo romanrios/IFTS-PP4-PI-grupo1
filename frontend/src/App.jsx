@@ -11,6 +11,8 @@ function App() {
       .catch((err) => console.log(err));
   }, []);
 
+  console.log("API URL:", process.env.REACT_APP_API_URL);
+
   return (
     <div className="app">
       <header>Header</header>
