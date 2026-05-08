@@ -16,7 +16,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
 
 // ruta de prueba
-app.get("/", (req, res) => {
+app.get("/api", (req, res) => {
   res.send("API funcionando 🚀");
 });
 

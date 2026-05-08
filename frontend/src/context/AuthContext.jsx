@@ -17,7 +17,7 @@ export function AuthProvider({ children }) {
     }
 
     try {
-      const res = await api.get("api/users/me");
+      const res = await api.get("/users/me");
       setUser(res.data);
     } catch (error) {
       console.log("Sesión inválida");
@@ -34,7 +34,7 @@ export function AuthProvider({ children }) {
 
   // login
   const login = async (credential) => {
-    const res = await api.post("api/auth/google", {
+    const res = await api.post("/auth/google", {
       credential,
     });
 

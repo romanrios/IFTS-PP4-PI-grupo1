@@ -1,13 +1,11 @@
 import { useEffect, useState } from "react";
 import api from "./api";
-
 import Login from "./components/Login";
 import UserProfile from "./components/UserProfile";
-
 import { useAuth } from "./context/AuthContext";
 
 function App() {
-  const [mensaje, setMensaje] = useState("");
+  const [mensaje, setMensaje] = useState(""); // mensaje ruta "/" "API funcionando" 
 
   const { user, loading } = useAuth();
 
@@ -27,13 +25,7 @@ function App() {
 
         <p>{mensaje}</p>
 
-        {loading ? (
-          <p>Cargando...</p>
-        ) : user ? (
-          <UserProfile />
-        ) : (
-          <Login />
-        )}
+        {loading ? <p>Cargando...</p> : user ? <UserProfile /> : <Login />}
       </main>
 
       <footer>Footer</footer>
