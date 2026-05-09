@@ -1,11 +1,11 @@
-const express = require("express");
+import express from "express";
+import authMiddleware from "../middleware/authMiddleware.js";
+
 const router = express.Router();
-const User = require("../models/User");
-const authMiddleware = require("../middleware/authMiddleware");
 
 // obtener perfil
 router.get("/me", authMiddleware, async (req, res) => {
   res.json(req.user);
 });
 
-module.exports = router;
+export default router;

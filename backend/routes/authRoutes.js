@@ -1,8 +1,8 @@
-const express = require("express");
-const router = express.Router();
+import express from "express";
+import { googleAuth } from "../controllers/authController.js";
 
-const { googleAuth } = require("../controllers/authController");
+const router = express.Router();
 
 router.post("/google", googleAuth);
 
-module.exports = router;
+export default router;

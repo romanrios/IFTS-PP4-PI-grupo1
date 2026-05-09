@@ -1,5 +1,5 @@
-const jwt = require("jsonwebtoken");
-const User = require("../models/User");
+import jwt from "jsonwebtoken";
+import User from "../models/User.js";
 
 const authMiddleware = async (req, res, next) => {
   try {
@@ -23,10 +23,9 @@ const authMiddleware = async (req, res, next) => {
     req.user = user;
 
     next();
-
   } catch (error) {
     return res.status(401).json({ error: "Token inválido" });
   }
 };
 
-module.exports = authMiddleware;
+export default authMiddleware;
