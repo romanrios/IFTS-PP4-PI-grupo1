@@ -41,6 +41,8 @@ export function AuthProvider({ children }) {
     localStorage.setItem("token", res.data.token);
 
     setUser(res.data.user);
+
+    return res.data.user;
   };
 
   // logout

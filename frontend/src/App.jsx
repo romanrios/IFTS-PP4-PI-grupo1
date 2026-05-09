@@ -1,35 +1,64 @@
-import { useEffect, useState } from "react";
-import api from "./api";
-import Login from "./components/Login";
-import UserProfile from "./components/UserProfile";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+
 import { useAuth } from "./context/AuthContext";
 
+import Header from "./components/Header";
+import ProtectedRoute from "./components/ProtectedRoute";
+
+import AdminDashboard from "./pages/AdminMenuPage";
+import AdoptantesPage from "./pages/AdoptantesPage";
+import LoginPage from "./pages/LoginPage";
+import MichisPage from "./pages/MichisPage";
+
 function App() {
-  const [mensaje, setMensaje] = useState(""); // mensaje ruta "/" "API funcionando" 
-
-  const { user, loading } = useAuth();
-
-  useEffect(() => {
-    api
-      .get("/")
-      .then((res) => setMensaje(res.data))
-      .catch((err) => console.log(err));
-  }, []);
+  const { user } = useAuth();
 
   return (
-    <div className="app">
-      <header>Header</header>
+    <BrowserRouter>
+      {/* Header solo si está logueado */}
+      {user && <Header />}
 
-      <main>
-        <h1>MichiGestión</h1>
+      <Routes>
+        {/* LOGIN */}
+        <Route path="/login" element={<LoginPage />} />
 
-        <p>{mensaje}</p>
+        {/* ADMIN */}
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute adminOnly>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
 
-        {loading ? <p>Cargando...</p> : user ? <UserProfile /> : <Login />}
-      </main>
+        {/* MICHIS */}
+        <Route
+          path="/michis"
+          element={
+            <ProtectedRoute>
+              <MichisPage />
+            </ProtectedRoute>
+          }
+        />
 
-      <footer>Footer</footer>
-    </div>
+        {/* ADOPTANTES */}
+        <Route
+          path="/adoptantes"
+          element={
+            <ProtectedRoute adminOnly>
+              <AdoptantesPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* REDIRECCIÓN */}
+        <Route
+          path="*"
+          element={<Navigate to={user ? "/michis" : "/login"} />}
+        />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
