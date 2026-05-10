@@ -26,8 +26,7 @@ function Login() {
   if (user) return null;
 
   return (
-    <div>
-      <h2>Login</h2>
+    <div className="google-login">
 
       <GoogleLogin
         onSuccess={handleSuccess}

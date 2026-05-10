@@ -38,6 +38,8 @@ select {
 
 /* Buttons */
 button {
+  color: inherit;
+  font-family: inherit;
   border: none;
   background: none;
   cursor: pointer;

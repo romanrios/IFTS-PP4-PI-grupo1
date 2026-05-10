@@ -1,14 +1,15 @@
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
+import "./Header.css";
 
 function Header() {
   const { user, logout } = useAuth();
 
   return (
-    <header>
+    <header className="header">
       <h2>MichiGestión</h2>
 
       {user && (
-        <div>
+        <div className="header__user">
           <img
             src={user.picture}
             alt={user.name}
