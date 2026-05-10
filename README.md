@@ -1,6 +1,6 @@
 # Práctica Profesionalizante 4 - Proyecto Integrador
 
-<img width="1179" height="213" alt="Group 12" src="https://github.com/user-attachments/assets/a792fd79-ed8e-4464-a2d4-c0ff39603035" />
+<img alt="MichiGestion" src="https://github.com/user-attachments/assets/a792fd79-ed8e-4464-a2d4-c0ff39603035" />
 
 ## Comisión 3A - Grupo 1
 

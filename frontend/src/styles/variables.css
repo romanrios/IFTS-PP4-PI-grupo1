@@ -1,0 +1,53 @@
+/* Primary Colors */
+:root {
+    --color-primary: #ff6d40;
+    --color-primary-light: color-mix(in srgb, var(--color-primary), white 20%);
+    --color-primary-lighter: color-mix(in srgb, var(--color-primary), white 50%);
+    --color-primary-lightest: color-mix(in srgb, var(--color-primary), white 80%);
+    --color-primary-dark: color-mix(in srgb, var(--color-primary), black 20%);
+    --color-primary-darker: color-mix(in srgb, var(--color-primary), black 50%);
+    --color-primary-darkest: color-mix(in srgb, var(--color-primary), black 80%);
+
+    /* Secondary Colors */
+    --color-secondary: #1d2a4a;
+    --color-secondary-light: color-mix(in srgb, var(--color-secondary), white 20%);
+    --color-secondary-lighter: color-mix(in srgb, var(--color-secondary), white 50%);
+    --color-secondary-lightest: color-mix(in srgb, var(--color-secondary), white 80%);
+    --color-secondary-dark: color-mix(in srgb, var(--color-secondary), black 20%);
+    --color-secondary-darker: color-mix(in srgb, var(--color-secondary), black 50%);
+    --color-secondary-darkest: color-mix(in srgb, var(--color-secondary), black 80%);
+
+    /* Aux Colors */
+    --color-aux: #48cfc4;
+    --color-aux-light: color-mix(in srgb, var(--color-aux), white 20%);
+    --color-aux-lighter: color-mix(in srgb, var(--color-aux), white 50%);
+    --color-aux-lightest: color-mix(in srgb, var(--color-aux), white 80%);
+    --color-aux-dark: color-mix(in srgb, var(--color-aux), black 20%);
+    --color-aux-darker: color-mix(in srgb, var(--color-aux), black 50%);
+    --color-aux-darkest: color-mix(in srgb, var(--color-aux), black 80%);
+
+    /* Semantic Colors */
+    --color-success: #28a745;
+    --color-warning: #ffc107;
+    --color-danger: #dc3545;
+    --color-info: #17a2b8;
+
+    /* Neutral Colors */
+    --color-white: #ffffff;
+    --color-black: #000000;
+    --color-gray-100: #f8f9fa;
+    --color-gray-200: #e9ecef;
+    --color-gray-300: #dee2e6;
+    --color-gray-400: #ced4da;
+    --color-gray-500: #adb5bd;
+    --color-gray-600: #6c757d;
+    --color-gray-700: #495057;
+    --color-gray-800: #343a40;
+    --color-gray-900: #212529;
+
+    /* Background & Text */
+    --color-background: var(--color-primary-lightest);
+    --color-text: var(--color-secondary);
+    --color-text-muted: #6c757d;
+    --color-border: #dee2e6;
+}

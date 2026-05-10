@@ -1,0 +1,25 @@
+.login-page {
+    background-color: var(--color-primary);
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    color: var(--color-white);
+}
+
+.login-page h1{
+    font-weight: 900;
+    font-size: 3rem;
+    margin-bottom: 2rem;
+}
+
+.login-page img{
+    width: 5rem;
+}
+
+.google-login div{
+    border-radius: 100px;
+    overflow: hidden;
+}
