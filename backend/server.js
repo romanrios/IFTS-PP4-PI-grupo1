@@ -4,6 +4,8 @@ import express from "express";
 import mongoose from "mongoose";
 import authRoutes from "./routes/authRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import gatoRoutes from "./routes/gatoRoutes.js";
+import solicitudRoutes from "./routes/solicitudRoutes.js";
 
 const app = express();
 
@@ -14,6 +16,8 @@ app.use(express.json());
 // rutas
 app.use("/api/users", userRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/gatos", gatoRoutes);
+app.use("/api/solicitudes", solicitudRoutes);
 
 // ruta de prueba
 app.get("/api", (req, res) => {
