@@ -44,7 +44,7 @@ export const updateEstadoSolicitud = async (req, res) => {
     const solicitudActualizada = await Solicitud.findByIdAndUpdate(
       req.params.id,
       { estadoSolicitud },
-      { new: true, runValidators: true }
+      { returnDocument: 'after', runValidators: true }
     );
 
     if (!solicitudActualizada) {
