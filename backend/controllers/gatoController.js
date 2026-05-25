@@ -57,7 +57,7 @@ export const updateGato = async (req, res) => {
     const gatoActualizado = await Gato.findByIdAndUpdate(
       req.params.id,
       req.body,
-      { new: true, runValidators: true } // { new: true } devuelve el gato ya modificado
+      { returnDocument: 'after', runValidators: true } // { returnDocument: 'after' } devuelve el gato ya modificado
     );
 
     if (!gatoActualizado) {

@@ -21,6 +21,12 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
+    // --- CAMPOS NUEVOS PARA EL ADOPTANTE ---
+    telefono: { type: String, default: "" },
+    direccion: { type: String, default: "" },
+    localidad: { type: String, default: "" },
+    descripcion: { type: String, default: "" },
   },
   {
     timestamps: true,
