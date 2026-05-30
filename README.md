@@ -1,4 +1,4 @@
-# Práctica Profesionalizante 4 - Proyecto Integrador
+# Práctica Profesionalizante 4 - Proyecto Integrador Final
 
 <img alt="MichiGestion" src="https://github.com/user-attachments/assets/a792fd79-ed8e-4464-a2d4-c0ff39603035" />
 
