@@ -1,0 +1,50 @@
+.michi-card {
+  background: var(--color-white);
+  border-radius: 16px;
+  overflow: hidden;
+
+  box-shadow: 0 4px 10px rgba(0,0,0,.8);
+
+  display: flex;  
+  flex-direction: column;
+  transition: transform .2s ease;
+}
+.michi-card:hover {
+  transform: translateY(-4px);
+}
+
+.michi-card__image {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+}
+
+.michi-card__content {
+  padding: 16px;
+}
+
+.michi-card__content h3 {
+  color: var(--color-secondary);
+  font-weight: 800;
+}
+
+.michi-card__actions {
+  margin-top: 16px;
+
+  display: flex;
+  justify-content: space-between;
+}
+
+.michi-card__actions button {
+  width: 60px;
+  height: 45px;
+
+  border: none;
+  border-radius: 10px;
+
+  cursor: pointer;
+}
+
+.michi-card__description {
+  color: var(--color-text-muted);
+}
