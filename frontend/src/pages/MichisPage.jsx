@@ -29,7 +29,7 @@ function MichisPage() {
 
   return (
     <>
-      <Header />
+      
       <div className="michis-page">
         <h1>Gestionar michis</h1>
 
@@ -46,7 +46,6 @@ function MichisPage() {
         </div>
       </div>
       
-      <Footer />
     </>
   );
 }
