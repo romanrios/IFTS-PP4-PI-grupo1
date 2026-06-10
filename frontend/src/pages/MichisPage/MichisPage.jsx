@@ -1,10 +1,8 @@
-import { useState, useEffect } from "react";
-import Header from "../components/Header/Header";
-import Footer from "../components/Footer/Footer";
-import MichiCard from "../components/MichiCard/MichiCard";
-import api from "../api";
-import { useAuth } from "../context/AuthContext";
-import "../styles/michisPages.css";
+import { useEffect, useState } from "react";
+import api from "../../api";
+import MichiCard from "../../components/MichiCard/MichiCard";
+import { useAuth } from "../../context/AuthContext";
+import "./MichisPages.css";
 
 function MichisPage() {
   const [michis, setMichis] = useState([]);
