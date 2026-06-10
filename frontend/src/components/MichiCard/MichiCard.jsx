@@ -1,6 +1,10 @@
+
+import { useAuth } from "../../context/AuthContext";
 import "./MichiCard.css";
 
 function MichiCard({ michi }) {
+  const { user } = useAuth();
+
   return (
     <article className="michi-card">
       <img
@@ -21,9 +25,15 @@ function MichiCard({ michi }) {
         </p>
 
         <div className="michi-card__actions">
-          <button>👁</button>
-          <button>✏️</button>
-          <button>🗑</button>
+          {user?.isAdmin ? (
+            <>
+              <button>👁</button>
+              <button>✎</button>
+              <button>🗑</button>
+            </>
+          ) : (
+            <button className="btn-adoptar">Quiero adoptarlo</button>
+          )}
         </div>
       </div>
     </article>

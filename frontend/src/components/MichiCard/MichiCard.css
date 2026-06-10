@@ -35,14 +35,33 @@
   justify-content: space-between;
 }
 
+/* Estilos botón del usuario admin */
+
 .michi-card__actions button {
   width: 60px;
   height: 45px;
 
   border: none;
   border-radius: 10px;
-
+  background-color: var(--color-primary); 
   cursor: pointer;
+}
+
+.michi-card__actions button:hover {
+  background-color: var(--color-primary-dark);
+}
+
+/* Estilos botón del usuario adoptante */
+.michi-card__actions .btn-adoptar {
+  width: 100%;
+  background-color: var(--color-primary); 
+  color: var(--color-white);
+  font-weight: 700;
+  transition: background-color 0.2s ease;
+}
+
+.michi-card__actions .btn-adoptar:hover {
+  background-color: var(--color-primary-dark);
 }
 
 .michi-card__description {
