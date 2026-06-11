@@ -3,11 +3,11 @@
   border-radius: 16px;
   overflow: hidden;
 
-  box-shadow: 0 4px 10px rgba(0,0,0,.8);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
 
-  display: flex;  
+  display: flex;
   flex-direction: column;
-  transition: transform .2s ease;
+  transition: transform 0.2s ease;
 }
 .michi-card:hover {
   transform: translateY(-4px);
@@ -21,6 +21,9 @@
 
 .michi-card__content {
   padding: 16px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
 .michi-card__content h3 {
@@ -29,21 +32,22 @@
 }
 
 .michi-card__actions {
-  margin-top: 16px;
-
+  margin-top: auto;
   display: flex;
   justify-content: space-between;
+  gap: 0.5rem;
 }
 
 /* Estilos botón del usuario admin */
 
 .michi-card__actions button {
-  width: 60px;
+  width: 100%;
   height: 45px;
-
+  color: var(--color-white);
+  font-size: 2rem;
   border: none;
   border-radius: 10px;
-  background-color: var(--color-primary); 
+  background-color: var(--color-primary);
   cursor: pointer;
 }
 
@@ -54,7 +58,7 @@
 /* Estilos botón del usuario adoptante */
 .michi-card__actions .btn-adoptar {
   width: 100%;
-  background-color: var(--color-primary); 
+  background-color: var(--color-primary);
   color: var(--color-white);
   font-weight: 700;
   transition: background-color 0.2s ease;
@@ -66,4 +70,5 @@
 
 .michi-card__description {
   color: var(--color-text-muted);
+  margin-bottom: 1rem;
 }
