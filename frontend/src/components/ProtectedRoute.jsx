@@ -18,5 +18,8 @@ function ProtectedRoute({ children, adminOnly = false }) {
 
   return children;
 }
-
+/*
+function ProtectedRoute({ children }) {
+  return children;
+}*/
 export default ProtectedRoute;

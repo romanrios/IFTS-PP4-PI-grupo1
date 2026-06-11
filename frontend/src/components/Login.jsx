@@ -1,22 +1,25 @@
 import { GoogleLogin } from "@react-oauth/google";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 function Login() {
   const { login, user } = useAuth();
-
   const navigate = useNavigate();
 
-  const handleSuccess = async (credentialResponse) => {
-    try {
-      const loggedUser = await login(credentialResponse.credential);
-
-      // redirección según rol
-      if (loggedUser.isAdmin) {
+  useEffect(() => {
+    if (user) {
+      if (user.isAdmin) {
         navigate("/admin");
       } else {
         navigate("/michis");
       }
+    }
+  }, [user, navigate]);
+
+  const handleSuccess = async (credentialResponse) => {
+    try {
+      await login(credentialResponse.credential);
     } catch (error) {
       console.log(error);
     }
@@ -27,7 +30,6 @@ function Login() {
 
   return (
     <div className="google-login">
-
       <GoogleLogin
         onSuccess={handleSuccess}
         onError={() => console.log("Login Failed")}
