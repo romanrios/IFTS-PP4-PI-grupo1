@@ -23,7 +23,7 @@ const gatoSchema = new mongoose.Schema(
     },
     foto: {
       type: String,
-      default: "https://via.placeholder.com/150" // Foto por defecto por si no se carga una al principio
+      default: "/michis/michi_01.jpg" // Foto por defecto por si no se carga una al principio
     },
     estadoAdopcion: {
       type: String,
