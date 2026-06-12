@@ -12,8 +12,8 @@ function AdminMenuPage() {
           <button className="adminMenuPage__btn">Gestionar Michis</button>
         </Link>
 
-        <Link to="/adoptantes">
-          <button className="adminMenuPage__btn">Ver Adoptantes</button>
+        <Link to="/solicitudes">
+          <button className="adminMenuPage__btn">Panel de Solicitudes</button>
         </Link>
       </div>
     </div>
