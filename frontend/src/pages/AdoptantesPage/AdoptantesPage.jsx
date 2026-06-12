@@ -1,7 +1,11 @@
+import TitleBar from "../../components/TitleBar/TitleBar";
+import "./AdoptantesPage.css";
+
+
 function AdoptantesPage() {
   return (
-    <div>
-      <h1>Adoptantes</h1>
+    <div className="adoptantesPage">
+      <TitleBar title="Ver adoptantes" backTo="/admin"/>
     </div>
   );
 }

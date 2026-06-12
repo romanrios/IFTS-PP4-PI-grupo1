@@ -1,5 +1,22 @@
 .titleBar{
-    padding-top:1rem;
+    padding:1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+
+}
+
+.titleBar__back{
+    padding: 0.3rem;
+    border-radius: 50%; 
+      transition: background-color 0.2s ease;
+   
+}
+
+.titleBar__back:hover{
+    background-color: var(--color-white);
 }
 
 .titleBar__title{

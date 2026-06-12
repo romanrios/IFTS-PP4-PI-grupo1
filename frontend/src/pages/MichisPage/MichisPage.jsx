@@ -27,12 +27,13 @@ function MichisPage() {
   }, []);
 
   return (
-    <>
+
+
+      <div className="michis-page">
         <TitleBar
           title={user?.isAdmin ? "Gestionar michis" : "Michis en adopción"}
+          backTo={user?.isAdmin && "/admin"}
         />
-      <div className="michis-page">
-
         {user?.isAdmin && <button className="btn-add">+ Agregar michi</button>}
 
         {loading ? (
@@ -45,7 +46,7 @@ function MichisPage() {
           </div>
         )}
       </div>
-    </>
+
   );
 }
 
