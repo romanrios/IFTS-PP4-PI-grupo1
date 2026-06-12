@@ -27,12 +27,12 @@ function MichiCard({ michi }) {
         <div className="michi-card__actions">
           {user?.isAdmin ? (
             <>
-              <button>👁</button>
-              <button>✎</button>
-              <button>🗑</button>
+              <button className="michi-card__btn-ver">👁</button>
+              <button className="michi-card__btn-editar">✎</button>
+              <button className="michi-card__btn-eliminar">🗑</button>
             </>
           ) : (
-            <button className="btn-adoptar">Quiero adoptarlo</button>
+            <button className="michi-card__btn-adoptar">Quiero adoptarlo</button>
           )}
         </div>
       </div>

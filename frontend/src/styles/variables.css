@@ -30,6 +30,7 @@
     --color-success: #28a745;
     --color-warning: #ffc107;
     --color-danger: #dc3545;
+    --color-danger-dark: color-mix(in srgb, var(--color-danger), black 20%);
     --color-info: #17a2b8;
 
     /* Neutral Colors */

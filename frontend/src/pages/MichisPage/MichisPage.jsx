@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../../api";
 import MichiCard from "../../components/MichiCard/MichiCard";
+import TitleBar from "../../components/TitleBar/TitleBar";
 import { useAuth } from "../../context/AuthContext";
 import "./MichisPages.css";
 
@@ -13,7 +14,7 @@ function MichisPage() {
   const fetchMichis = async () => {
     try {
       const res = await api.get("/gatos");
-      setMichis(res.data); 
+      setMichis(res.data);
     } catch (error) {
       console.error("Error al obtener los michis:", error);
     } finally {
@@ -27,28 +28,23 @@ function MichisPage() {
 
   return (
     <>
+        <TitleBar
+          title={user?.isAdmin ? "Gestionar michis" : "Michis en adopción"}
+        />
       <div className="michis-page">
-        <h1>{user?.isAdmin ? "Gestionar michis" : "Michis en adopción"}</h1>
 
-
-        {user?.isAdmin && (
-            <button className="btn-add">+ Agregar michi</button>
-          )}
+        {user?.isAdmin && <button className="btn-add">+ Agregar michi</button>}
 
         {loading ? (
           <p>Cargando michis...</p>
         ) : (
           <div className="michis-grid">
             {michis.map((michi) => (
-              <MichiCard
-                key={michi._id}
-                michi={michi}
-              />
+              <MichiCard key={michi._id} michi={michi} />
             ))}
           </div>
         )}
       </div>
-      
     </>
   );
 }

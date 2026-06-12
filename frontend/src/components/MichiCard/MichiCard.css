@@ -3,7 +3,7 @@
   border-radius: 16px;
   overflow: hidden;
 
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 5px 8px rgba(0, 0, 0, 0.3);
 
   display: flex;
   flex-direction: column;
@@ -31,6 +31,11 @@
   font-weight: 800;
 }
 
+.michi-card__description {
+  color: var(--color-text-muted);
+  margin-bottom: 1rem;
+}
+
 .michi-card__actions {
   margin-top: auto;
   display: flex;
@@ -38,37 +43,42 @@
   gap: 0.5rem;
 }
 
-/* Estilos botón del usuario admin */
+/* Estilos botón comunes */
 
 .michi-card__actions button {
   width: 100%;
   height: 45px;
-  color: var(--color-white);
-  font-size: 2rem;
   border: none;
   border-radius: 10px;
-  background-color: var(--color-primary);
+  color: var(--color-white);
   cursor: pointer;
+  background-color: var(--color-primary);
 }
 
 .michi-card__actions button:hover {
   background-color: var(--color-primary-dark);
 }
 
+/* Estilos botón del usuario admin */
+
+.michi-card__btn-ver,
+.michi-card__btn-editar,
+.michi-card__btn-eliminar {
+  font-size: 1.8rem;
+}
+
+
+.michi-card__btn-eliminar {
+  background-color: var(--color-danger) !important;
+}
+
+.michi-card__btn-eliminar:hover {
+  background-color: var(--color-danger-dark) !important;
+}
+
+
 /* Estilos botón del usuario adoptante */
-.michi-card__actions .btn-adoptar {
-  width: 100%;
-  background-color: var(--color-primary);
-  color: var(--color-white);
+.michi-card__btn-adoptar {
   font-weight: 700;
   transition: background-color 0.2s ease;
-}
-
-.michi-card__actions .btn-adoptar:hover {
-  background-color: var(--color-primary-dark);
-}
-
-.michi-card__description {
-  color: var(--color-text-muted);
-  margin-bottom: 1rem;
 }
