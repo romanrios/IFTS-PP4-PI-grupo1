@@ -1,18 +1,21 @@
 import { Link } from "react-router-dom";
 import TitleBar from "../../components/TitleBar/TitleBar";
+import "./AdminMenuPage.css";
 
 function AdminMenuPage() {
   return (
-    <div>
+    <div className="adminMenuPage">
       <TitleBar title="Menú administrador" />
 
-      <Link to="/michis">
-        <button>Gestionar Michis</button>
-      </Link>
+      <div className="adminMenuPage__container">
+        <Link to="/michis">
+          <button className="adminMenuPage__btn">Gestionar Michis</button>
+        </Link>
 
-      <Link to="/adoptantes">
-        <button>Ver Adoptantes</button>
-      </Link>
+        <Link to="/adoptantes">
+          <button className="adminMenuPage__btn">Ver Adoptantes</button>
+        </Link>
+      </div>
     </div>
   );
 }

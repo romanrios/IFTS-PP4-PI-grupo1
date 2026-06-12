@@ -1,5 +1,12 @@
 .header {
     background-color: var(--color-primary);
+    display: flex;
+    justify-content: center;
+}
+
+.header__container {
+    max-width: 1200px;
+    width: 100%;
     color: var(--color-white);
     display: flex;
     justify-content: space-between;

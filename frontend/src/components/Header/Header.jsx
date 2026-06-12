@@ -6,6 +6,7 @@ function Header() {
 
   return (
     <header className="header">
+      <div className="header__container">
       <h2>MichiGestión</h2>
 
       {user && (
@@ -22,6 +23,7 @@ function Header() {
           </button>
         </div>
       )}
+      </div>
     </header>
   );
 }

@@ -2,12 +2,8 @@
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 1rem 1rem 2rem 1rem;
+  padding: 0 1rem 1rem 1rem;
   color: var(--color-text);
-}
-
-.michis-page h1 {
-  margin-bottom: 1rem;
 }
 
 .michis-grid {
@@ -32,4 +28,12 @@
   font-size: 1.3rem;
   font-weight: 600;
   cursor: pointer;
+
+    transition: background-color 0.2s ease;
+
+}
+
+.btn-add:hover{
+    background-color: var(--color-aux-dark);
+
 }

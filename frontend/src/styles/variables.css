@@ -49,6 +49,6 @@
     /* Background & Text */
     --color-background: var(--color-primary-lightest);
     --color-text: var(--color-secondary);
-    --color-text-muted: #6c757d;
-    --color-border: #dee2e6;
+    --color-text-muted: var(--color-gray-600);
+    --color-border: var(--color-gray-300);
 }
