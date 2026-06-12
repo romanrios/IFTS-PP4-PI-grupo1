@@ -1,0 +1,180 @@
+.solicitudes-page {
+  width: 100%;
+  max-width: 1200px;
+  padding: 0 1rem 2rem;
+}
+
+.solicitudes-list {
+  max-width: 900px;
+  margin: 0 auto;
+
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.solicitud-card {
+  background: var(--color-white);
+
+  border-radius: 18px;
+
+  padding: 1.5rem;
+
+  box-shadow: 0 5px 12px rgba(0, 0, 0, 0.12);
+
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+
+  width: 100%;
+}
+
+.solicitud-card:hover {
+  transform: translateY(-2px);
+
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+}
+
+.solicitud-card__header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.solicitud-card__header img {
+  width: 90px;
+  height: 90px;
+
+  object-fit: cover;
+
+  border-radius: 12px;
+
+  flex-shrink: 0;
+}
+
+.solicitud-card__header h3 {
+  color: var(--color-secondary);
+  font-weight: 800;
+  margin-bottom: 0.3rem;
+}
+
+.solicitud-card__header p {
+  color: var(--color-text-muted);
+}
+
+.solicitud-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.solicitud-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.solicitud-card__actions button {
+  flex: 1;
+  min-width: 130px;
+
+  padding: 0.8rem;
+
+  border-radius: 10px;
+
+  color: white;
+  font-weight: 700;
+
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.solicitud-card__actions button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-aprobar,
+.btn-rechazar {
+  flex: 1;
+
+  padding: 0.8rem;
+
+  border-radius: 10px;
+
+  color: white;
+
+  font-weight: 700;
+}
+
+.btn-aprobar {
+  background: var(--color-success);
+}
+
+.btn-rechazar {
+  background: var(--color-danger);
+}
+
+.btn-pendiente {
+  background-color: var(--color-warning);
+  color: var(--color-black);
+}
+
+.btn-eliminar-solicitud {
+  background-color: var(--color-danger);
+}
+
+.solicitud-card__estado {
+  margin: 0.75rem 0;
+}
+
+.estado-badge {
+  display: inline-block;
+
+  padding: 0.4rem 0.9rem;
+
+  border-radius: 999px;
+
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.estado-aprobada {
+  background: rgba(40, 167, 69, 0.15);
+  color: #198754;
+}
+
+.estado-rechazada {
+  background: rgba(220, 53, 69, 0.15);
+  color: #dc3545;
+}
+
+.estado-pendiente {
+  background: rgba(255, 193, 7, 0.2);
+  color: #9a6b00;
+}
+
+.solicitud-card__motivo {
+  background: var(--color-gray-100);
+
+  border-left: 4px solid var(--color-primary);
+
+  padding: 1rem;
+
+  border-radius: 8px;
+}
+
+.solicitud-card__motivo p {
+  margin-top: 0.5rem;
+}
+
+.solicitud-fecha {
+  font-size: 0.85rem;
+  color: #777;
+  margin-top: 0.25rem;
+}

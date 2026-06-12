@@ -21,9 +21,14 @@
     background-color: var(--color-primary);
     color: var(--color-white);
     font-size: 1.5rem;
-padding: 0.6rem 3rem;
-border-radius: 50px;
+    padding: 0.6rem 3rem;
+    border-radius: 50px;
     transition: background-color 0.2s ease;
+    /* ancho fijo para que todos los botones tengan el mismo tamaño */
+    width: 20rem;
+    max-width: 100%;
+    white-space: nowrap;
+    text-align: center;
 
 }
 

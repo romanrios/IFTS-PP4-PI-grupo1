@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import api from "../../api";
 import MichiCard from "../../components/MichiCard/MichiCard";
 import TitleBar from "../../components/TitleBar/TitleBar";
@@ -8,8 +9,8 @@ import "./MichisPages.css";
 function MichisPage() {
   const [michis, setMichis] = useState([]);
   const [loading, setLoading] = useState(true);
-
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   const fetchMichis = async () => {
     try {
@@ -34,7 +35,7 @@ function MichisPage() {
           title={user?.isAdmin ? "Gestionar michis" : "Michis en adopción"}
           backTo={user?.isAdmin && "/admin"}
         />
-        {user?.isAdmin && <button className="btn-add">+ Agregar michi</button>}
+        {user?.isAdmin && <button className="btn-add" onClick={() => navigate("/michis/nuevo")}>+ Agregar michi</button>}
 
         {loading ? (
           <p>Cargando michis...</p>
