@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
+import TitleBar from "../../components/TitleBar/TitleBar";
 
 function AdminMenuPage() {
   return (
     <div>
-      <h1>Panel Administrador</h1>
+      <TitleBar title="Menú administrador" />
 
       <Link to="/michis">
         <button>Gestionar Michis</button>
