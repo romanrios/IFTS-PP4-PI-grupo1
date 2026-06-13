@@ -1,5 +1,6 @@
 import { useAuth } from "../../context/AuthContext";
 import { confirmAlert } from "../../utils/alerts";
+import logo from "../../assets/isotype-white.svg";
 import "./Header.css";
 
 function Header() {
@@ -19,7 +20,11 @@ function Header() {
   return (
     <header className="header">
       <div className="header__container">
-        <h2>MichiGestión</h2>
+
+        <div className="header__logo">
+          <img src={logo} alt="MichiGestión logo" className="header__logo-isotipo" />
+          <span className="header__logo-texto">MichiGestión</span>
+        </div>
 
         {user && (
           <div className="header__user">
