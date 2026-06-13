@@ -27,6 +27,10 @@ function MichisPage() {
     fetchMichis();
   }, []);
 
+  const handleDeleteMichi = (id) => {
+    setMichis((prev) => prev.filter((michi) => michi._id !== id));
+  };
+
   return (
 
 
@@ -42,7 +46,11 @@ function MichisPage() {
         ) : (
           <div className="michis-grid">
             {michis.map((michi) => (
-              <MichiCard key={michi._id} michi={michi} />
+              <MichiCard
+                key={michi._id}
+                michi={michi}
+                onDelete={handleDeleteMichi}
+              />
             ))}
           </div>
         )}

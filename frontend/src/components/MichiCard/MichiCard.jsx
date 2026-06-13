@@ -5,7 +5,7 @@ import { useAuth } from "../../context/AuthContext";
 import { confirmAlert, errorAlert, successAlert } from "../../utils/alerts";
 import "./MichiCard.css";
 
-function MichiCard({ michi }) {
+function MichiCard({ michi, onDelete }) {
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -25,7 +25,7 @@ function MichiCard({ michi }) {
         `${michi.nombre} fue eliminado correctamente`,
       );
 
-      window.location.reload();
+      onDelete?.(michi._id);
     } catch (error) {
       console.error(error);
 
