@@ -5,12 +5,12 @@ import User from "../models/User.js";
 // @access  Privado
 export const updatePerfilAdoptante = async (req, res) => {
     try {
-        const { telefono, localidad, descripcionHogar } = req.body;
+        const { telefono, localidad, descripcion } = req.body;
         const userId = req.user._id; // Extraído automáticamente gracias al authMiddleware
 
         const userActualizado = await User.findByIdAndUpdate(
             userId,
-            { telefono, localidad, descripcionHogar },
+            { telefono, localidad, descripcion },
             { returnDocument: 'after' } // Evita el warning de Mongoose
         );
 
