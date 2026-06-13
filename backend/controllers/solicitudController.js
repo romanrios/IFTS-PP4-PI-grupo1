@@ -7,6 +7,35 @@ export const createSolicitud = async (req, res) => {
   const { usuario, gato, motivo, telefonoContacto } = req.body;
 
   try {
+    // 1. Verificar si el gato existe en la base de datos
+    const gatoDB = await Gato.findById(gato);
+
+    if (!gatoDB) {
+      return res.status(404).json({
+        message: "Michi no encontrado",
+      });
+    }
+
+    // 2. Verificar si el gato ya está adoptado
+    if (gatoDB.estadoAdopcion === "Adoptado") {
+      return res.status(400).json({
+        message: "Este michi ya fue adoptado",
+      });
+    }
+
+    // 3. Validar si el usuario ya envió una solicitud previa para este mismo gato
+    const solicitudExistente = await Solicitud.findOne({
+      usuario,
+      gato,
+    });
+
+    if (solicitudExistente) {
+      return res.status(400).json({
+        message: "Ya enviaste una solicitud para este michi",
+      });
+    }
+
+    // 4. Si pasa todos los filtros, se crea y guarda la solicitud
     const nuevaSolicitud = new Solicitud({
       usuario,
       gato,
@@ -34,12 +63,10 @@ export const getSolicitudes = async (req, res) => {
 
     res.status(200).json(solicitudes);
   } catch (error) {
-    res
-      .status(500)
-      .json({
-        message: "Error al obtener las solicitudes",
-        error: error.message,
-      });
+    res.status(500).json({
+      message: "Error al obtener las solicitudes",
+      error: error.message,
+    });
   }
 };
 
@@ -63,6 +90,18 @@ export const updateEstadoSolicitud = async (req, res) => {
       await Gato.findByIdAndUpdate(solicitudActualizada.gato, {
         estadoAdopcion: "Adoptado",
       });
+
+      await Solicitud.updateMany(
+        {
+          gato: solicitudActualizada.gato,
+          _id: {
+            $ne: solicitudActualizada._id,
+          },
+        },
+        {
+          estadoSolicitud: "Rechazada",
+        },
+      );
     }
 
     res.status(200).json(solicitudActualizada);
@@ -73,14 +112,11 @@ export const updateEstadoSolicitud = async (req, res) => {
   }
 };
 
-
 // @desc    Eliminar una solicitud
 // @route   DELETE /api/solicitudes/:id
 export const deleteSolicitud = async (req, res) => {
   try {
-    const solicitud = await Solicitud.findByIdAndDelete(
-      req.params.id
-    );
+    const solicitud = await Solicitud.findByIdAndDelete(req.params.id);
 
     if (!solicitud) {
       return res.status(404).json({
