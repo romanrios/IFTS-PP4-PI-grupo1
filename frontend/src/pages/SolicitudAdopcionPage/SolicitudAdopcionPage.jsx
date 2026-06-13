@@ -30,6 +30,7 @@ function SolicitudAdopcionPage() {
       setMichi(res.data);
     } catch (error) {
       console.error(error);
+      errorAlert("Error", error);
     }
   };
 
@@ -52,10 +53,7 @@ function SolicitudAdopcionPage() {
     } catch (error) {
       console.error(error);
 
-      errorAlert(
-        "Error",
-        "No se pudo enviar la solicitud."
-      );
+      errorAlert("Error", error);
     }
   };
 

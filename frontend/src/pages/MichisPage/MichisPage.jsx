@@ -4,6 +4,7 @@ import api from "../../api";
 import MichiCard from "../../components/MichiCard/MichiCard";
 import TitleBar from "../../components/TitleBar/TitleBar";
 import { useAuth } from "../../context/AuthContext";
+import { errorAlert } from "../../utils/alerts";
 import "./MichisPages.css";
 
 function MichisPage() {
@@ -18,6 +19,7 @@ function MichisPage() {
       setMichis(res.data);
     } catch (error) {
       console.error("Error al obtener los michis:", error);
+      errorAlert("Error", error);
     } finally {
       setLoading(false);
     }

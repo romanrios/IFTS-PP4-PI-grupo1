@@ -2,7 +2,7 @@ import { Eye, Pencil, Trash } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api";
 import { useAuth } from "../../context/AuthContext";
-import { confirmAlert, errorAlert, successAlert } from "../../utils/alerts";
+import { deleteConfirmAlert, errorAlert, successAlert } from "../../utils/alerts";
 import "./MichiCard.css";
 
 function MichiCard({ michi, onDelete }) {
@@ -10,9 +10,9 @@ function MichiCard({ michi, onDelete }) {
   const navigate = useNavigate();
 
   const handleDelete = async () => {
-    const result = await confirmAlert(
+    const result = await deleteConfirmAlert(
       "Eliminar michi",
-      `¿Desea eliminar a ${michi.nombre}?`,
+      `¿Desea eliminar a ${michi.nombre}? Esta acción no se puede deshacer.`,
     );
 
     if (!result.isConfirmed) return;
@@ -29,7 +29,7 @@ function MichiCard({ michi, onDelete }) {
     } catch (error) {
       console.error(error);
 
-      errorAlert("Error", "No se pudo eliminar el michi");
+      errorAlert("Error", error);
     }
   };
   return (

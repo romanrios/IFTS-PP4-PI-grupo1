@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../../api";
 import TitleBar from "../../components/TitleBar/TitleBar";
-import { confirmAlert, errorAlert, successAlert } from "../../utils/alerts";
+import { confirmAlert, deleteConfirmAlert, errorAlert, successAlert } from "../../utils/alerts";
 import "./SolicitudesPage.css";
 
 function SolicitudesPage() {
@@ -14,6 +14,7 @@ function SolicitudesPage() {
       setSolicitudes(res.data);
     } catch (error) {
       console.error(error);
+      errorAlert("Error", error);
     } finally {
       setLoading(false);
     }
@@ -23,24 +24,47 @@ function SolicitudesPage() {
     fetchSolicitudes();
   }, []);
 
-  const actualizarEstado = async (id, estadoSolicitud) => {
+  const actualizarEstado = async (solicitud, estadoSolicitud) => {
+    const acciones = {
+      Aprobada: "aprobar",
+      Rechazada: "rechazar",
+      Pendiente: "marcar como pendiente",
+    };
+
+    const titulos = {
+      Aprobada: "Aprobar solicitud",
+      Rechazada: "Rechazar solicitud",
+      Pendiente: "Cambiar estado de solicitud",
+    };
+
+    const result = await confirmAlert(
+      titulos[estadoSolicitud],
+      `¿Desea ${acciones[estadoSolicitud]} la solicitud de ${solicitud.usuario?.name}?`,
+    );
+
+    if (!result.isConfirmed) return;
+
     try {
-      await api.put(`/solicitudes/${id}`, {
+      await api.put(`/solicitudes/${solicitud._id}`, {
         estadoSolicitud,
       });
 
-      await successAlert("Solicitud " + estadoSolicitud);
+      await successAlert(
+        "Operación realizada",
+        `La solicitud fue marcada como ${estadoSolicitud}.`,
+      );
 
       fetchSolicitudes();
     } catch (error) {
       console.error(error);
+      errorAlert("Error", error);
     }
   };
 
   const eliminarSolicitud = async (solicitud) => {
-    const result = await confirmAlert(
+    const result = await deleteConfirmAlert(
       "Eliminar solicitud",
-      `¿Desea eliminar la solicitud de ${solicitud.usuario?.name}?`,
+      `¿Desea eliminar la solicitud de ${solicitud.usuario?.name}? Esta acción no se puede deshacer.`,
     );
 
     if (!result.isConfirmed) return;
@@ -57,7 +81,7 @@ function SolicitudesPage() {
     } catch (error) {
       console.error(error);
 
-      errorAlert("Error", "No se pudo eliminar la solicitud");
+      errorAlert("Error", error);
     }
   };
 
@@ -114,21 +138,21 @@ function SolicitudesPage() {
               <div className="solicitud-card__actions">
                 <button
                   className="btn-aprobar"
-                  onClick={() => actualizarEstado(s._id, "Aprobada")}
+                  onClick={() => actualizarEstado(s, "Aprobada")}
                 >
                   Aprobar
                 </button>
 
                 <button
                   className="btn-rechazar"
-                  onClick={() => actualizarEstado(s._id, "Rechazada")}
+                  onClick={() => actualizarEstado(s, "Rechazada")}
                 >
                   Rechazar
                 </button>
 
                 <button
                   className="btn-pendiente"
-                  onClick={() => actualizarEstado(s._id, "Pendiente")}
+                  onClick={() => actualizarEstado(s, "Pendiente")}
                 >
                   Pendiente
                 </button>

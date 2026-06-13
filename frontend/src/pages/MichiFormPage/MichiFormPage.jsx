@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../../api";
 import TitleBar from "../../components/TitleBar/TitleBar";
-import { successAlert } from "../../utils/alerts";
+import { errorAlert, successAlert } from "../../utils/alerts";
 import "./MichiFormPage.css";
 
 function MichiFormPage() {
@@ -32,6 +32,7 @@ function MichiFormPage() {
       setForm(res.data);
     } catch (error) {
       console.error(error);
+      errorAlert("Error", error);
     }
   };
 
@@ -65,7 +66,7 @@ function MichiFormPage() {
       navigate("/michis");
     } catch (error) {
       console.error(error);
-      alert("Error al guardar el michi");
+      await errorAlert("Error", error);
     }
   };
 

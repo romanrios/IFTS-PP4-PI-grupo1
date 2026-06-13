@@ -2,6 +2,7 @@ import { GoogleLogin } from "@react-oauth/google";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { errorAlert } from "../utils/alerts";
 
 function Login() {
   const { login, user } = useAuth();
@@ -21,7 +22,8 @@ function Login() {
     try {
       await login(credentialResponse.credential);
     } catch (error) {
-      console.log(error);
+      console.error(error);
+      errorAlert("Error", error);
     }
   };
 
@@ -32,7 +34,9 @@ function Login() {
     <div className="google-login">
       <GoogleLogin
         onSuccess={handleSuccess}
-        onError={() => console.log("Login Failed")}
+        onError={() =>
+          errorAlert("Error", "No se pudo iniciar sesión con Google")
+        }
       />
     </div>
   );
