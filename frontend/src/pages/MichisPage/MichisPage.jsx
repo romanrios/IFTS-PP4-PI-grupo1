@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api";
 import MichiCard from "../../components/MichiCard/MichiCard";
+import MichiCardSkeleton from "../../components/MichiCardSkeleton/MichiCardSkeleton";
 import TitleBar from "../../components/TitleBar/TitleBar";
 import { useAuth } from "../../context/AuthContext";
+import { errorAlert } from "../../utils/alerts";
 import "./MichisPages.css";
 
 function MichisPage() {
@@ -18,6 +20,7 @@ function MichisPage() {
       setMichis(res.data);
     } catch (error) {
       console.error("Error al obtener los michis:", error);
+      errorAlert("Error", error);
     } finally {
       setLoading(false);
     }
@@ -26,6 +29,10 @@ function MichisPage() {
   useEffect(() => {
     fetchMichis();
   }, []);
+
+  const handleDeleteMichi = (id) => {
+    setMichis((prev) => prev.filter((michi) => michi._id !== id));
+  };
 
   return (
 
@@ -38,11 +45,19 @@ function MichisPage() {
         {user?.isAdmin && <button className="btn-add" onClick={() => navigate("/michis/nuevo")}>+ Agregar michi</button>}
 
         {loading ? (
-          <p>Cargando michis...</p>
+          <div className="michis-grid">
+            {Array.from({ length: 6 }).map((_, index) => (
+              <MichiCardSkeleton key={index} />
+            ))}
+          </div>
         ) : (
           <div className="michis-grid">
             {michis.map((michi) => (
-              <MichiCard key={michi._id} michi={michi} />
+              <MichiCard
+                key={michi._id}
+                michi={michi}
+                onDelete={handleDeleteMichi}
+              />
             ))}
           </div>
         )}

@@ -1,21 +1,26 @@
 import { Eye, Pencil, Trash } from "lucide-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api";
+import Spinner from "../Spinner/Spinner";
 import { useAuth } from "../../context/AuthContext";
-import { confirmAlert, errorAlert, successAlert } from "../../utils/alerts";
+import { deleteConfirmAlert, errorAlert, successAlert } from "../../utils/alerts";
 import "./MichiCard.css";
 
-function MichiCard({ michi }) {
+function MichiCard({ michi, onDelete }) {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [deleting, setDeleting] = useState(false);
 
   const handleDelete = async () => {
-    const result = await confirmAlert(
+    const result = await deleteConfirmAlert(
       "Eliminar michi",
-      `¿Desea eliminar a ${michi.nombre}?`,
+      `¿Desea eliminar a ${michi.nombre}? Esta acción no se puede deshacer.`,
     );
 
     if (!result.isConfirmed) return;
+
+    setDeleting(true);
 
     try {
       await api.delete(`/gatos/${michi._id}`);
@@ -25,11 +30,13 @@ function MichiCard({ michi }) {
         `${michi.nombre} fue eliminado correctamente`,
       );
 
-      window.location.reload();
+      onDelete?.(michi._id);
     } catch (error) {
       console.error(error);
 
-      errorAlert("Error", "No se pudo eliminar el michi");
+      errorAlert("Error", error);
+    } finally {
+      setDeleting(false);
     }
   };
   return (
@@ -53,15 +60,17 @@ function MichiCard({ michi }) {
               </button>
               <button
                 className="michi-card__btn-editar"
+                disabled={deleting}
                 onClick={() => navigate(`/michis/editar/${michi._id}`)}
               >
                 <Pencil />
               </button>
               <button
                 className="michi-card__btn-eliminar"
+                disabled={deleting}
                 onClick={handleDelete}
               >
-                <Trash />
+                {deleting ? <Spinner /> : <Trash />}
               </button>
             </>
           ) : (

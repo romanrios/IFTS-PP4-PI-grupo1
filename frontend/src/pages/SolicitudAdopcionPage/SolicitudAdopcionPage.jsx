@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../../api";
+import SolicitudAdopcionSkeleton from "../../components/SolicitudAdopcionSkeleton/SolicitudAdopcionSkeleton";
+import Spinner from "../../components/Spinner/Spinner";
 import TitleBar from "../../components/TitleBar/TitleBar";
-import { useAuth } from "../../context/AuthContext";
 import {
-    errorAlert,
-    successAlert,
+  errorAlert,
+  successAlert,
 } from "../../utils/alerts";
 
 import "./SolicitudAdopcionPage.css";
@@ -14,9 +15,9 @@ function SolicitudAdopcionPage() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  const { user } = useAuth();
-
   const [michi, setMichi] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   const [form, setForm] = useState({
     motivo: "",
@@ -28,20 +29,26 @@ function SolicitudAdopcionPage() {
   }, []);
 
   const fetchMichi = async () => {
+    setLoading(true);
+
     try {
       const res = await api.get(`/gatos/${id}`);
       setMichi(res.data);
     } catch (error) {
       console.error(error);
+      errorAlert("Error", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setSubmitting(true);
+
     try {
       await api.post("/solicitudes", {
-        usuario: user._id,
         gato: id,
         motivo: form.motivo,
         telefonoContacto: form.telefonoContacto,
@@ -56,10 +63,9 @@ function SolicitudAdopcionPage() {
     } catch (error) {
       console.error(error);
 
-      errorAlert(
-        "Error",
-        "No se pudo enviar la solicitud."
-      );
+      errorAlert("Error", error);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -70,7 +76,9 @@ function SolicitudAdopcionPage() {
         backTo="/michis"
       />
 
-      {michi && (
+      {loading ? (
+        <SolicitudAdopcionSkeleton />
+      ) : michi ? (
         <div className="solicitud-card">
           <img
             src={michi.foto}
@@ -106,12 +114,12 @@ function SolicitudAdopcionPage() {
               }
             />
 
-            <button type="submit">
-              Enviar solicitud
+            <button type="submit" disabled={submitting}>
+              {submitting ? <Spinner /> : "Enviar solicitud"}
             </button>
           </form>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }

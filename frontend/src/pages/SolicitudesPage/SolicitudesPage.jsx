@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
 import api from "../../api";
 import TitleBar from "../../components/TitleBar/TitleBar";
-import { confirmAlert, errorAlert, successAlert } from "../../utils/alerts";
+import SolicitudCardSkeleton from "../../components/SolicitudCardSkeleton/SolicitudCardSkeleton";
+import Spinner from "../../components/Spinner/Spinner";
+import { confirmAlert, deleteConfirmAlert, errorAlert, successAlert } from "../../utils/alerts";
 import "./SolicitudesPage.css";
 
 function SolicitudesPage() {
   const [solicitudes, setSolicitudes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(null);
+
+  const getActionKey = (id, action) => `${id}-${action}`;
 
   const fetchSolicitudes = async () => {
     try {
@@ -14,6 +19,7 @@ function SolicitudesPage() {
       setSolicitudes(res.data);
     } catch (error) {
       console.error(error);
+      errorAlert("Error", error);
     } finally {
       setLoading(false);
     }
@@ -23,27 +29,60 @@ function SolicitudesPage() {
     fetchSolicitudes();
   }, []);
 
-  const actualizarEstado = async (id, estadoSolicitud) => {
+  const actualizarEstado = async (solicitud, estadoSolicitud) => {
+    const acciones = {
+      Aprobada: "aprobar",
+      Rechazada: "rechazar",
+      Pendiente: "marcar como pendiente",
+    };
+
+    const titulos = {
+      Aprobada: "Aprobar solicitud",
+      Rechazada: "Rechazar solicitud",
+      Pendiente: "Cambiar estado de solicitud",
+    };
+
+    const result = await confirmAlert(
+      titulos[estadoSolicitud],
+      `¿Desea ${acciones[estadoSolicitud]} la solicitud de ${solicitud.usuario?.name}?`,
+    );
+
+    if (!result.isConfirmed) return;
+
+    const actionKey = getActionKey(solicitud._id, estadoSolicitud);
+
+    setActionLoading(actionKey);
+
     try {
-      await api.put(`/solicitudes/${id}`, {
+      await api.put(`/solicitudes/${solicitud._id}`, {
         estadoSolicitud,
       });
 
-      await successAlert("Solicitud " + estadoSolicitud);
+      await successAlert(
+        "Operación realizada",
+        `La solicitud fue marcada como ${estadoSolicitud}.`,
+      );
 
       fetchSolicitudes();
     } catch (error) {
       console.error(error);
+      errorAlert("Error", error);
+    } finally {
+      setActionLoading(null);
     }
   };
 
   const eliminarSolicitud = async (solicitud) => {
-    const result = await confirmAlert(
+    const result = await deleteConfirmAlert(
       "Eliminar solicitud",
-      `¿Desea eliminar la solicitud de ${solicitud.usuario?.name}?`,
+      `¿Desea eliminar la solicitud de ${solicitud.usuario?.name}? Esta acción no se puede deshacer.`,
     );
 
     if (!result.isConfirmed) return;
+
+    const actionKey = getActionKey(solicitud._id, "eliminar");
+
+    setActionLoading(actionKey);
 
     try {
       await api.delete(`/solicitudes/${solicitud._id}`);
@@ -57,7 +96,9 @@ function SolicitudesPage() {
     } catch (error) {
       console.error(error);
 
-      errorAlert("Error", "No se pudo eliminar la solicitud");
+      errorAlert("Error", error);
+    } finally {
+      setActionLoading(null);
     }
   };
 
@@ -66,7 +107,11 @@ function SolicitudesPage() {
       <TitleBar title="Panel de Solicitudes" backTo="/admin" />
 
       {loading ? (
-        <p>Cargando solicitudes...</p>
+        <div className="solicitudes-list">
+          {Array.from({ length: 3 }).map((_, index) => (
+            <SolicitudCardSkeleton key={index} />
+          ))}
+        </div>
       ) : solicitudes.length === 0 ? (
         <p>No hay solicitudes registradas.</p>
       ) : (
@@ -114,30 +159,50 @@ function SolicitudesPage() {
               <div className="solicitud-card__actions">
                 <button
                   className="btn-aprobar"
-                  onClick={() => actualizarEstado(s._id, "Aprobada")}
+                  disabled={Boolean(actionLoading)}
+                  onClick={() => actualizarEstado(s, "Aprobada")}
                 >
-                  Aprobar
+                  {actionLoading === getActionKey(s._id, "Aprobada") ? (
+                    <Spinner />
+                  ) : (
+                    "Aprobar"
+                  )}
                 </button>
 
                 <button
                   className="btn-rechazar"
-                  onClick={() => actualizarEstado(s._id, "Rechazada")}
+                  disabled={Boolean(actionLoading)}
+                  onClick={() => actualizarEstado(s, "Rechazada")}
                 >
-                  Rechazar
+                  {actionLoading === getActionKey(s._id, "Rechazada") ? (
+                    <Spinner />
+                  ) : (
+                    "Rechazar"
+                  )}
                 </button>
 
                 <button
                   className="btn-pendiente"
-                  onClick={() => actualizarEstado(s._id, "Pendiente")}
+                  disabled={Boolean(actionLoading)}
+                  onClick={() => actualizarEstado(s, "Pendiente")}
                 >
-                  Pendiente
+                  {actionLoading === getActionKey(s._id, "Pendiente") ? (
+                    <Spinner />
+                  ) : (
+                    "Pendiente"
+                  )}
                 </button>
 
                 <button
                   className="btn-eliminar-solicitud"
+                  disabled={Boolean(actionLoading)}
                   onClick={() => eliminarSolicitud(s)}
                 >
-                  Eliminar
+                  {actionLoading === getActionKey(s._id, "eliminar") ? (
+                    <Spinner />
+                  ) : (
+                    "Eliminar"
+                  )}
                 </button>
               </div>
             </article>

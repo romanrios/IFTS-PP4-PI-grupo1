@@ -13,6 +13,11 @@ main {
     background-color: var(--color-background);
 }
 
+button:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+}
+
 #root {
     display: flex;
     flex-direction: column;

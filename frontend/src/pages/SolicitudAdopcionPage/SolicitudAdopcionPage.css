@@ -52,4 +52,8 @@
   padding: .9rem;
 
   font-weight: 700;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }

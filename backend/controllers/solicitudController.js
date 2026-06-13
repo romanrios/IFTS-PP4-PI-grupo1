@@ -1,10 +1,13 @@
+import mongoose from "mongoose";
 import Gato from "../models/Gato.js";
 import Solicitud from "../models/Solicitud.js";
 
 // @desc    Crear una nueva solicitud de adopción (Cuando el usuario aprieta "Adoptar")
 // @route   POST /api/solicitudes
 export const createSolicitud = async (req, res) => {
-  const { usuario, gato, motivo, telefonoContacto } = req.body;
+  const { gato, motivo, telefonoContacto } = req.body;
+
+  const usuario = req.user._id;
 
   try {
     // 1. Verificar si el gato existe en la base de datos
@@ -73,48 +76,86 @@ export const getSolicitudes = async (req, res) => {
 // @desc    Actualizar el estado de una solicitud (Aprobar o Rechazar)
 // @route   PUT /api/solicitudes/:id
 export const updateEstadoSolicitud = async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({
+      message: "ID inválido",
+    });
+  }
+
   const { estadoSolicitud } = req.body;
 
+  const session = await Gato.startSession();
+
   try {
+    session.startTransaction();
+
+    // 1. Actualizar la solicitud
     const solicitudActualizada = await Solicitud.findByIdAndUpdate(
       req.params.id,
       { estadoSolicitud },
-      { returnDocument: "after", runValidators: true },
+      {
+        new: true,
+        runValidators: true,
+        session,
+      },
     );
 
     if (!solicitudActualizada) {
-      return res.status(404).json({ message: "Solicitud no encontrada" });
+      await session.abortTransaction();
+
+      return res.status(404).json({
+        message: "Solicitud no encontrada",
+      });
     }
 
+    // 2. Si se aprueba, marcar el gato como adoptado
+    //    y rechazar automáticamente las demás solicitudes
     if (estadoSolicitud === "Aprobada") {
-      await Gato.findByIdAndUpdate(solicitudActualizada.gato, {
-        estadoAdopcion: "Adoptado",
-      });
+      await Gato.findByIdAndUpdate(
+        solicitudActualizada.gato,
+        {
+          estadoAdopcion: "Adoptado",
+        },
+        { session },
+      );
 
       await Solicitud.updateMany(
         {
           gato: solicitudActualizada.gato,
-          _id: {
-            $ne: solicitudActualizada._id,
-          },
+          _id: { $ne: solicitudActualizada._id },
         },
         {
           estadoSolicitud: "Rechazada",
         },
+        { session },
       );
     }
 
-    res.status(200).json(solicitudActualizada);
+    // 3. Confirmar todos los cambios
+    await session.commitTransaction();
+
+    return res.status(200).json(solicitudActualizada);
   } catch (error) {
-    res
-      .status(400)
-      .json({ message: "Error al actualizar el estado", error: error.message });
+    await session.abortTransaction();
+
+    return res.status(400).json({
+      message: "Error al actualizar el estado",
+      error: error.message,
+    });
+  } finally {
+    session.endSession();
   }
 };
 
 // @desc    Eliminar una solicitud
 // @route   DELETE /api/solicitudes/:id
 export const deleteSolicitud = async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({
+      message: "ID inválido",
+    });
+  }
+
   try {
     const solicitud = await Solicitud.findByIdAndDelete(req.params.id);
 

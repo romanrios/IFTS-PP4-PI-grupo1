@@ -1,0 +1,50 @@
+.solicitud-card-skeleton {
+  pointer-events: none;
+}
+
+.solicitud-card-skeleton__avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 12px;
+  flex-shrink: 0;
+}
+
+.solicitud-card-skeleton__header-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.solicitud-card-skeleton__title {
+  height: 1.4rem;
+  width: 50%;
+}
+
+.solicitud-card-skeleton__line {
+  height: 0.9rem;
+  width: 80%;
+}
+
+.solicitud-card-skeleton__line--short {
+  width: 45%;
+}
+
+.solicitud-card-skeleton__badge {
+  height: 1.8rem;
+  width: 120px;
+  border-radius: 999px;
+}
+
+.solicitud-card-skeleton__motivo {
+  height: 4.5rem;
+  width: 100%;
+  border-radius: 8px;
+}
+
+.solicitud-card-skeleton__action {
+  flex: 1;
+  min-width: 130px;
+  height: 2.8rem;
+  border-radius: 10px;
+}

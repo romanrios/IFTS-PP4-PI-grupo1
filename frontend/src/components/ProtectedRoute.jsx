@@ -1,11 +1,12 @@
 import { Navigate } from "react-router-dom";
+import { PageLoader } from "../components/Spinner/Spinner";
 import { useAuth } from "../context/AuthContext";
 
 function ProtectedRoute({ children, adminOnly = false }) {
   const { user, loading } = useAuth();
 
   if (loading) {
-    return <p>Cargando...</p>;
+    return <PageLoader />;
   }
 
   if (!user) {
