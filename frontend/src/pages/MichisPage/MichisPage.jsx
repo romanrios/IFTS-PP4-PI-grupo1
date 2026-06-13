@@ -11,13 +11,22 @@ import "./MichisPages.css";
 function MichisPage() {
   const [michis, setMichis] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 12,
+    totalItems: 0,
+    totalPages: 1,
+  });
   const { user } = useAuth();
   const navigate = useNavigate();
 
   const fetchMichis = async () => {
+    setLoading(true);
     try {
-      const res = await api.get("/gatos");
-      setMichis(res.data);
+      const res = await api.get("/gatos", { params: { page, limit: 12 } });
+      setMichis(res.data.data);
+      setPagination(res.data.pagination);
     } catch (error) {
       console.error("Error al obtener los michis:", error);
       errorAlert("Error", error);
@@ -28,7 +37,7 @@ function MichisPage() {
 
   useEffect(() => {
     fetchMichis();
-  }, []);
+  }, [page]);
 
   const handleDeleteMichi = (id) => {
     setMichis((prev) => prev.filter((michi) => michi._id !== id));
@@ -51,15 +60,36 @@ function MichisPage() {
             ))}
           </div>
         ) : (
-          <div className="michis-grid">
-            {michis.map((michi) => (
-              <MichiCard
-                key={michi._id}
-                michi={michi}
-                onDelete={handleDeleteMichi}
-              />
-            ))}
-          </div>
+          <>
+            <div className="michis-grid">
+              {michis.map((michi) => (
+                <MichiCard
+                  key={michi._id}
+                  michi={michi}
+                  onDelete={handleDeleteMichi}
+                />
+              ))}
+            </div>
+            <div className="michis-pagination">
+              <button
+                type="button"
+                onClick={() => setPage((prev) => prev - 1)}
+                disabled={pagination.page <= 1}
+              >
+                Anterior
+              </button>
+              <span className="michis-pagination__info">
+                Página {pagination.page} de {pagination.totalPages}
+              </span>
+              <button
+                type="button"
+                onClick={() => setPage((prev) => prev + 1)}
+                disabled={pagination.page >= pagination.totalPages}
+              >
+                Siguiente
+              </button>
+            </div>
+          </>
         )}
       </div>
 

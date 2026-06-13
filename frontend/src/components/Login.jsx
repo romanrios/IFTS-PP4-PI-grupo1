@@ -42,7 +42,7 @@ function Login() {
       {loggingIn ? (
         <div className="login-loading" role="status" aria-label="Iniciando sesión">
           <Spinner size={28} />
-          <span>Iniciando sesión...</span>
+          {/* <span>Iniciando sesión...</span> */}
         </div>
       ) : (
         <GoogleLogin

@@ -5,9 +5,26 @@ import Gato from "../models/Gato.js";
 // @route   GET /api/gatos
 export const getGatos = async (req, res) => {
   try {
-    // Buscamos todos los gatos en la base de datos
-    const gatos = await Gato.find();
-    res.status(200).json(gatos);
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = Math.max(1, parseInt(req.query.limit, 10) || 10);
+    const skip = (page - 1) * limit;
+
+    const [gatos, totalItems] = await Promise.all([
+      Gato.find().skip(skip).limit(limit),
+      Gato.countDocuments(),
+    ]);
+
+    const totalPages = Math.ceil(totalItems / limit) || 1;
+
+    res.status(200).json({
+      data: gatos,
+      pagination: {
+        page,
+        limit,
+        totalItems,
+        totalPages,
+      },
+    });
   } catch (error) {
     res.status(500).json({ message: "Error al obtener los michis", error: error.message });
   }
