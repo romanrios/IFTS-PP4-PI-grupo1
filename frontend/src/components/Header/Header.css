@@ -18,8 +18,22 @@
   padding: 0.5rem 1rem;
 }
 
-.header h2 {
+
+
+.header__logo{
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.header__logo-isotipo{
+ height: 1.7rem;
+ display:inline;
+}
+
+.header__logo-texto {
   font-weight: 900;
+  font-size: 1.3rem;
 }
 
 .header__user {
