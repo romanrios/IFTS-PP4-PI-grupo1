@@ -6,14 +6,14 @@ import {
   updateGato, 
   deleteGato 
 } from "../controllers/gatoController.js";
+import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-// Por ahora, dejamos todas las rutas libres para que se pueda conectar sin problemas desde el Front
-router.get("/", getGatos);
-router.get("/:id", getGatoById);
-router.post("/", createGato);
-router.put("/:id", updateGato);
-router.delete("/:id", deleteGato);
+router.get("/", authMiddleware, getGatos);
+router.get("/:id", authMiddleware, getGatoById);
+router.post("/", authMiddleware, createGato);
+router.put("/:id", authMiddleware, updateGato);
+router.delete("/:id", authMiddleware, deleteGato);
 
 export default router;

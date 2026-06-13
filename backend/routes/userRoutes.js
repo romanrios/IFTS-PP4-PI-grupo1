@@ -4,13 +4,10 @@ import { getUsers, updatePerfilAdoptante } from "../controllers/userController.j
 
 const router = express.Router();
 
-// obtener perfil
 router.get("/me", authMiddleware, async (req, res) => {
   res.json(req.user);
 });
-
 router.put("/perfil", authMiddleware, updatePerfilAdoptante);
-
 router.get("/", authMiddleware, getUsers);
 
 export default router;
