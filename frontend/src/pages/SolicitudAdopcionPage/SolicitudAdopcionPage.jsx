@@ -2,10 +2,9 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../../api";
 import TitleBar from "../../components/TitleBar/TitleBar";
-import { useAuth } from "../../context/AuthContext";
 import {
-    errorAlert,
-    successAlert,
+  errorAlert,
+  successAlert,
 } from "../../utils/alerts";
 
 import "./SolicitudAdopcionPage.css";
@@ -13,8 +12,6 @@ import "./SolicitudAdopcionPage.css";
 function SolicitudAdopcionPage() {
   const { id } = useParams();
   const navigate = useNavigate();
-
-  const { user } = useAuth();
 
   const [michi, setMichi] = useState(null);
 
@@ -41,7 +38,6 @@ function SolicitudAdopcionPage() {
 
     try {
       await api.post("/solicitudes", {
-        usuario: user._id,
         gato: id,
         motivo: form.motivo,
         telefonoContacto: form.telefonoContacto,

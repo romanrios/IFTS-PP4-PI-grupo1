@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import Gato from "../models/Gato.js";
 
 // @desc    Obtener todos los gatos (Para que los adoptantes vean la lista)
@@ -15,6 +16,12 @@ export const getGatos = async (req, res) => {
 // @desc    Obtener un solo gato por su ID (Para ver el detalle de un michi)
 // @route   GET /api/gatos/:id
 export const getGatoById = async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({
+      message: "ID inválido",
+    });
+  }
+
   try {
     const gato = await Gato.findById(req.params.id);
     if (!gato) {
@@ -52,6 +59,12 @@ export const createGato = async (req, res) => {
 // @desc    Actualizar los datos de un gato o su estado (Para editar o marcar como Adoptado)
 // @route   PUT /api/gatos/:id
 export const updateGato = async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({
+      message: "ID inválido",
+    });
+  }
+
   try {
     // Buscamos por ID y actualizamos con lo que venga en el cuerpo de la petición
     const gatoActualizado = await Gato.findByIdAndUpdate(
@@ -73,6 +86,12 @@ export const updateGato = async (req, res) => {
 // @desc    Eliminar el registro de un gato (Solo por si el Admin se equivocó)
 // @route   DELETE /api/gatos/:id
 export const deleteGato = async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({
+      message: "ID inválido",
+    });
+  }
+
   try {
     const gatoEliminado = await Gato.findByIdAndDelete(req.params.id);
     

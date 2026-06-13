@@ -26,21 +26,22 @@ const googleAuth = async (req, res) => {
         name,
         picture,
       });
-
-      await user.save();
+    } else {
+      user.name = name;
+      user.picture = picture;
     }
 
-    const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "7d" }
-    );
+    await user.save();
+
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "7d",
+    });
 
     res.json({ user, token });
-
   } catch (error) {
     res.status(401).json({ error: "Token inválido" });
   }
 };
 
 export { googleAuth };
+
