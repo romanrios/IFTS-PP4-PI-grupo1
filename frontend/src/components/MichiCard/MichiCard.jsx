@@ -55,7 +55,12 @@ function MichiCard({ michi, onDelete }) {
         <div className="michi-card__actions">
           {user?.isAdmin ? (
             <>
-              <button className="michi-card__btn-ver">
+              <button
+                className="michi-card__btn-ver"
+                disabled={deleting}
+                onClick={() => navigate(`/michis/${michi._id}`)}
+                aria-label={`Ver ${michi.nombre}`}
+              >
                 <Eye />
               </button>
               <button

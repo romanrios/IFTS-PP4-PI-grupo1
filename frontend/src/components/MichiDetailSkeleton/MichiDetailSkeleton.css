@@ -1,0 +1,50 @@
+.michi-detail-skeleton {
+  pointer-events: none;
+}
+
+.michi-detail-skeleton__image {
+  width: 100%;
+  height: 380px;
+  border-radius: 16px;
+}
+
+.michi-detail-skeleton__title {
+  height: 2.4rem;
+  width: 55%;
+}
+
+.michi-detail-skeleton__badge {
+  height: 2rem;
+  width: 140px;
+  border-radius: 999px;
+}
+
+.michi-detail-skeleton__info-item {
+  height: 4.5rem;
+  width: 100%;
+  border-radius: 12px;
+}
+
+.michi-detail-skeleton__section-title {
+  height: 1.4rem;
+  width: 35%;
+  margin-bottom: 0.75rem;
+}
+
+.michi-detail-skeleton__line {
+  height: 0.95rem;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.michi-detail-skeleton__line--short {
+  width: 70%;
+}
+
+.michi-detail-skeleton__button {
+  height: 3rem;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+  border-radius: 50px;
+}
