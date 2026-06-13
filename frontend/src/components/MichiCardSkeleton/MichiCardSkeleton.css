@@ -1,0 +1,38 @@
+.michi-card-skeleton {
+  pointer-events: none;
+}
+
+.michi-card-skeleton__image {
+  width: 100%;
+  height: 250px;
+  border-radius: 0;
+}
+
+.michi-card-skeleton__title {
+  height: 1.5rem;
+  width: 60%;
+  margin-bottom: 0.75rem;
+}
+
+.michi-card-skeleton__info {
+  height: 1rem;
+  width: 40%;
+  margin-bottom: 1rem;
+}
+
+.michi-card-skeleton__description {
+  height: 0.9rem;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.michi-card-skeleton__description--short {
+  width: 75%;
+  margin-bottom: 1rem;
+}
+
+.michi-card-skeleton__button {
+  width: 100%;
+  height: 45px;
+  border-radius: 10px;
+}

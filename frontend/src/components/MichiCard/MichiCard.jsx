@@ -1,6 +1,8 @@
 import { Eye, Pencil, Trash } from "lucide-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api";
+import Spinner from "../Spinner/Spinner";
 import { useAuth } from "../../context/AuthContext";
 import { deleteConfirmAlert, errorAlert, successAlert } from "../../utils/alerts";
 import "./MichiCard.css";
@@ -8,6 +10,7 @@ import "./MichiCard.css";
 function MichiCard({ michi, onDelete }) {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const [deleting, setDeleting] = useState(false);
 
   const handleDelete = async () => {
     const result = await deleteConfirmAlert(
@@ -16,6 +19,8 @@ function MichiCard({ michi, onDelete }) {
     );
 
     if (!result.isConfirmed) return;
+
+    setDeleting(true);
 
     try {
       await api.delete(`/gatos/${michi._id}`);
@@ -30,6 +35,8 @@ function MichiCard({ michi, onDelete }) {
       console.error(error);
 
       errorAlert("Error", error);
+    } finally {
+      setDeleting(false);
     }
   };
   return (
@@ -53,15 +60,17 @@ function MichiCard({ michi, onDelete }) {
               </button>
               <button
                 className="michi-card__btn-editar"
+                disabled={deleting}
                 onClick={() => navigate(`/michis/editar/${michi._id}`)}
               >
                 <Pencil />
               </button>
               <button
                 className="michi-card__btn-eliminar"
+                disabled={deleting}
                 onClick={handleDelete}
               >
-                <Trash />
+                {deleting ? <Spinner /> : <Trash />}
               </button>
             </>
           ) : (

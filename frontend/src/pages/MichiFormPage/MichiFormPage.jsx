@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../../api";
+import MichiFormSkeleton from "../../components/MichiFormSkeleton/MichiFormSkeleton";
+import Spinner from "../../components/Spinner/Spinner";
 import TitleBar from "../../components/TitleBar/TitleBar";
 import { errorAlert, successAlert } from "../../utils/alerts";
 import "./MichiFormPage.css";
@@ -19,6 +21,8 @@ function MichiFormPage() {
     foto: "",
     estadoAdopcion: "Publicado",
   });
+  const [loadingData, setLoadingData] = useState(isEdit);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (isEdit) {
@@ -27,12 +31,16 @@ function MichiFormPage() {
   }, [id]);
 
   const loadMichi = async () => {
+    setLoadingData(true);
+
     try {
       const res = await api.get(`/gatos/${id}`);
       setForm(res.data);
     } catch (error) {
       console.error(error);
       errorAlert("Error", error);
+    } finally {
+      setLoadingData(false);
     }
   };
 
@@ -45,6 +53,8 @@ function MichiFormPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    setSubmitting(true);
 
     try {
       if (isEdit) {
@@ -67,6 +77,8 @@ function MichiFormPage() {
     } catch (error) {
       console.error(error);
       await errorAlert("Error", error);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -77,6 +89,9 @@ function MichiFormPage() {
         backTo="/michis"
       />
 
+      {loadingData ? (
+        <MichiFormSkeleton />
+      ) : (
       <form className="michi-form" onSubmit={handleSubmit}>
         <input
           name="nombre"
@@ -126,10 +141,17 @@ function MichiFormPage() {
           required
         />
 
-        <button type="submit">
-          {isEdit ? "Guardar cambios" : "Crear michi"}
+        <button type="submit" disabled={submitting}>
+          {submitting ? (
+            <Spinner />
+          ) : isEdit ? (
+            "Guardar cambios"
+          ) : (
+            "Crear michi"
+          )}
         </button>
       </form>
+      )}
     </div>
   );
 }

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../../api";
+import SolicitudAdopcionSkeleton from "../../components/SolicitudAdopcionSkeleton/SolicitudAdopcionSkeleton";
+import Spinner from "../../components/Spinner/Spinner";
 import TitleBar from "../../components/TitleBar/TitleBar";
 import {
   errorAlert,
@@ -14,6 +16,8 @@ function SolicitudAdopcionPage() {
   const navigate = useNavigate();
 
   const [michi, setMichi] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   const [form, setForm] = useState({
     motivo: "",
@@ -25,17 +29,23 @@ function SolicitudAdopcionPage() {
   }, []);
 
   const fetchMichi = async () => {
+    setLoading(true);
+
     try {
       const res = await api.get(`/gatos/${id}`);
       setMichi(res.data);
     } catch (error) {
       console.error(error);
       errorAlert("Error", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    setSubmitting(true);
 
     try {
       await api.post("/solicitudes", {
@@ -54,6 +64,8 @@ function SolicitudAdopcionPage() {
       console.error(error);
 
       errorAlert("Error", error);
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -64,7 +76,9 @@ function SolicitudAdopcionPage() {
         backTo="/michis"
       />
 
-      {michi && (
+      {loading ? (
+        <SolicitudAdopcionSkeleton />
+      ) : michi ? (
         <div className="solicitud-card">
           <img
             src={michi.foto}
@@ -100,12 +114,12 @@ function SolicitudAdopcionPage() {
               }
             />
 
-            <button type="submit">
-              Enviar solicitud
+            <button type="submit" disabled={submitting}>
+              {submitting ? <Spinner /> : "Enviar solicitud"}
             </button>
           </form>
         </div>
-      )}
+      ) : null}
     </div>
   );
 }
