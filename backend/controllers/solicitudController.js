@@ -47,6 +47,17 @@ export const createSolicitud = async (req, res) => {
     });
 
     const solicitudGuardada = await nuevaSolicitud.save();
+    // 5. Si el michi está en estado "Publicado", actualizarlo a "Con solicitudes".
+    //    Usamos una actualización condicional para que la operación sea segura
+    //    frente a condiciones de carrera: solo cambiaremos el estado si
+    //    actualmente es exactamente "Publicado". De esta forma la primera
+    //    solicitud que llegue provocará la transición y las siguientes no
+    //    revertirán ni duplicarán la operación.
+    await Gato.findOneAndUpdate(
+      { _id: gato, estadoAdopcion: "Publicado" },
+      { estadoAdopcion: "Con solicitudes" },
+    );
+
     res.status(201).json(solicitudGuardada);
   } catch (error) {
     res
