@@ -8,6 +8,7 @@ import {
   errorAlert,
   successAlert,
 } from "../../utils/alerts";
+import { SOLICITUD_LIMITS, validateFields } from "../../utils/fieldLimits";
 
 import "./SolicitudAdopcionPage.css";
 
@@ -23,10 +24,15 @@ function SolicitudAdopcionPage() {
     motivo: "",
     telefonoContacto: "",
   });
+  const [fieldErrors, setFieldErrors] = useState({});
 
   useEffect(() => {
     fetchMichi();
   }, []);
+
+  useEffect(() => {
+    setFieldErrors(validateFields(form, SOLICITUD_LIMITS));
+  }, [form]);
 
   const fetchMichi = async () => {
     setLoading(true);
@@ -44,6 +50,13 @@ function SolicitudAdopcionPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    const errors = validateFields(form, SOLICITUD_LIMITS);
+    setFieldErrors(errors);
+
+    if (Object.keys(errors).length > 0) {
+      return;
+    }
 
     setSubmitting(true);
 
@@ -69,6 +82,8 @@ function SolicitudAdopcionPage() {
     }
   };
 
+  const hasValidationErrors = Object.keys(fieldErrors).length > 0;
+
   return (
     <div className="solicitud-page">
       <TitleBar
@@ -88,24 +103,36 @@ function SolicitudAdopcionPage() {
           <h2>{michi.nombre}</h2>
 
           <form onSubmit={handleSubmit}>
-            <textarea
-              placeholder="¿Por qué querés adoptar este michi?"
-              required
-              rows={5}
-              value={form.motivo}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  motivo: e.target.value,
-                })
-              }
-            />
+            <div className="solicitud-card__textarea-field">
+              <textarea
+                placeholder="¿Por qué querés adoptar este michi?"
+                required
+                rows={5}
+                value={form.motivo}
+                minLength={SOLICITUD_LIMITS.motivo.min}
+                maxLength={SOLICITUD_LIMITS.motivo.max}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    motivo: e.target.value,
+                  })
+                }
+              />
+              <span className="form-char-counter">
+                {form.motivo.length} / {SOLICITUD_LIMITS.motivo.max}
+              </span>
+              {fieldErrors.motivo && (
+                <p className="form-field-error" role="alert">{fieldErrors.motivo}</p>
+              )}
+            </div>
 
             <input
               type="text"
               placeholder="Teléfono de contacto"
               required
               value={form.telefonoContacto}
+              minLength={SOLICITUD_LIMITS.telefonoContacto.min}
+              maxLength={SOLICITUD_LIMITS.telefonoContacto.max}
               onChange={(e) =>
                 setForm({
                   ...form,
@@ -113,8 +140,11 @@ function SolicitudAdopcionPage() {
                 })
               }
             />
+            {fieldErrors.telefonoContacto && (
+              <p className="form-field-error" role="alert">{fieldErrors.telefonoContacto}</p>
+            )}
 
-            <button type="submit" disabled={submitting}>
+            <button type="submit" disabled={submitting || hasValidationErrors}>
               {submitting ? <Spinner /> : "Enviar solicitud"}
             </button>
           </form>

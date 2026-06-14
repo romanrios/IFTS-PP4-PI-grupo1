@@ -7,7 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 import { errorAlert } from "../../utils/alerts";
 import "./MichiDetailPage.css";
 
-const DEFAULT_TITLE = "MichiGestión";
+// const DEFAULT_TITLE = "MichiGestión";
 
 const getEstadoClass = (estado) =>
   `michi-detail__estado--${estado.toLowerCase().replace(/\s+/g, "-")}`;
@@ -37,15 +37,15 @@ function MichiDetailPage() {
     fetchMichi();
   }, [id]);
 
-  useEffect(() => {
-    if (michi?.nombre) {
-      document.title = `${michi.nombre} | Adopta un Michi`;
-    }
+  // useEffect(() => {
+  //   if (michi?.nombre) {
+  //     document.title = `${michi.nombre} | Adopta un Michi`;
+  //   }
 
-    return () => {
-      document.title = DEFAULT_TITLE;
-    };
-  }, [michi?.nombre]);
+  //   return () => {
+  //     document.title = DEFAULT_TITLE;
+  //   };
+  // }, [michi?.nombre]);
 
   const fetchMichi = async () => {
     setLoading(true);

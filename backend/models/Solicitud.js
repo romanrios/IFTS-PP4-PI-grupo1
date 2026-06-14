@@ -15,11 +15,15 @@ const solicitudSchema = new mongoose.Schema(
     motivo: {
       type: String,
       required: [true, "Por favor, contanos por qué querés adoptar a este michi"],
-      trim: true
+      trim: true,
+      minlength: [30, "El motivo debe tener al menos 30 caracteres"],
+      maxlength: [400, "El motivo no puede superar los 400 caracteres"],
     },
     telefonoContacto: {
       type: String,
-      required: [true, "Necesitamos un teléfono de contacto"]
+      required: [true, "Necesitamos un teléfono de contacto"],
+      minlength: [6, "El teléfono debe tener al menos 6 caracteres"],
+      maxlength: [20, "El teléfono no puede superar los 20 caracteres"],
     },
     estadoSolicitud: {
       type: String,

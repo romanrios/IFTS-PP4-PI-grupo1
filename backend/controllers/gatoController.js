@@ -1,13 +1,31 @@
 import mongoose from "mongoose";
 import Gato from "../models/Gato.js";
+import { uploadImage } from "../config/cloudinary.js";
 
 // @desc    Obtener todos los gatos (Para que los adoptantes vean la lista)
 // @route   GET /api/gatos
 export const getGatos = async (req, res) => {
   try {
-    // Buscamos todos los gatos en la base de datos
-    const gatos = await Gato.find();
-    res.status(200).json(gatos);
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = Math.max(1, parseInt(req.query.limit, 10) || 10);
+    const skip = (page - 1) * limit;
+
+    const [gatos, totalItems] = await Promise.all([
+      Gato.find().skip(skip).limit(limit),
+      Gato.countDocuments(),
+    ]);
+
+    const totalPages = Math.ceil(totalItems / limit) || 1;
+
+    res.status(200).json({
+      data: gatos,
+      pagination: {
+        page,
+        limit,
+        totalItems,
+        totalPages,
+      },
+    });
   } catch (error) {
     res.status(500).json({ message: "Error al obtener los michis", error: error.message });
   }
@@ -39,14 +57,19 @@ export const createGato = async (req, res) => {
   const { nombre, edadAprox, sexo, descripcion, foto, estadoAdopcion } = req.body;
 
   try {
-    // Creamos el nuevo registro con los datos que viajan desde el formulario del Front
+    let fotoUrl = foto;
+
+    if (req.file) {
+      fotoUrl = await uploadImage(req.file.buffer);
+    }
+
     const nuevoGato = new Gato({
       nombre,
       edadAprox,
       sexo,
       descripcion,
-      foto, // Román puede mandar una URL de imagen o usar la de por defecto
-      estadoAdopcion
+      ...(fotoUrl && { foto: fotoUrl }),
+      estadoAdopcion,
     });
 
     const gatoGuardado = await nuevoGato.save();
@@ -66,16 +89,25 @@ export const updateGato = async (req, res) => {
   }
 
   try {
-    // Buscamos por ID y actualizamos con lo que venga en el cuerpo de la petición
-    const gatoActualizado = await Gato.findByIdAndUpdate(
-      req.params.id,
-      req.body,
-      { returnDocument: 'after', runValidators: true } // { returnDocument: 'after' } devuelve el gato ya modificado
-    );
+    const gatoExistente = await Gato.findById(req.params.id);
 
-    if (!gatoActualizado) {
+    if (!gatoExistente) {
       return res.status(404).json({ message: "Michi no encontrado para actualizar" });
     }
+
+    const updateData = { ...req.body };
+
+    if (req.file) {
+      updateData.foto = await uploadImage(req.file.buffer);
+    } else if (updateData.foto === undefined || updateData.foto === "") {
+      delete updateData.foto;
+    }
+
+    const gatoActualizado = await Gato.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { returnDocument: 'after', runValidators: true }
+    );
 
     res.status(200).json(gatoActualizado);
   } catch (error) {
