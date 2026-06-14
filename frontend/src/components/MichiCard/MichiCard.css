@@ -243,6 +243,9 @@
 }
 
 .michi-card__btn-cancelar-solicitud {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-weight: 700;
   background-color: var(--color-danger) !important;
 }
