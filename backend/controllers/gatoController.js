@@ -2,6 +2,9 @@ import mongoose from "mongoose";
 import Gato from "../models/Gato.js";
 import { uploadImage } from "../config/cloudinary.js";
 
+const getVisibilityFilter = (user) =>
+  user?.isAdmin ? {} : { estadoAdopcion: { $ne: "No publicado" } };
+
 // @desc    Obtener todos los gatos (Para que los adoptantes vean la lista)
 // @route   GET /api/gatos
 export const getGatos = async (req, res) => {
@@ -9,9 +12,11 @@ export const getGatos = async (req, res) => {
     const page = Math.max(1, parseInt(req.query.page, 10) || 1);
     const limit = Math.max(1, parseInt(req.query.limit, 10) || 10);
     const skip = (page - 1) * limit;
+    const visibilityFilter = getVisibilityFilter(req.user);
 
     const [gatos, totalItems] = await Promise.all([
       Gato.aggregate([
+        { $match: visibilityFilter },
         {
           $addFields: {
             _adoptedLast: {
@@ -24,7 +29,7 @@ export const getGatos = async (req, res) => {
         { $limit: limit },
         { $project: { _adoptedLast: 0 } },
       ]),
-      Gato.countDocuments(),
+      Gato.countDocuments(visibilityFilter),
     ]);
 
     const totalPages = Math.ceil(totalItems / limit) || 1;
@@ -57,6 +62,11 @@ export const getGatoById = async (req, res) => {
     if (!gato) {
       return res.status(404).json({ message: "Michi no encontrado" });
     }
+
+    if (!req.user.isAdmin && gato.estadoAdopcion === "No publicado") {
+      return res.status(404).json({ message: "Michi no encontrado" });
+    }
+
     res.status(200).json(gato);
   } catch (error) {
     res.status(500).json({ message: "Error al obtener el detalle del michi", error: error.message });
