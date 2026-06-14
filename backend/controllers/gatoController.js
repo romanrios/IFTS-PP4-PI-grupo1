@@ -11,7 +11,19 @@ export const getGatos = async (req, res) => {
     const skip = (page - 1) * limit;
 
     const [gatos, totalItems] = await Promise.all([
-      Gato.find().skip(skip).limit(limit),
+      Gato.aggregate([
+        {
+          $addFields: {
+            _adoptedLast: {
+              $cond: [{ $eq: ["$estadoAdopcion", "Adoptado"] }, 1, 0],
+            },
+          },
+        },
+        { $sort: { _adoptedLast: 1, createdAt: -1 } },
+        { $skip: skip },
+        { $limit: limit },
+        { $project: { _adoptedLast: 0 } },
+      ]),
       Gato.countDocuments(),
     ]);
 
