@@ -174,27 +174,27 @@ function SolicitudAdopcionPage() {
       {loading ? (
         <SolicitudAdopcionSkeleton />
       ) : michi ? (
-        <div className="solicitud-card">
+        <div className="adopcion-card">
           <MichiInfo michi={michi} />
 
           {isAprobada && (
-            <div className="solicitud-card__estado solicitud-card__estado--aprobada" role="status">
+            <div className="adopcion-card__estado adopcion-card__estado--aprobada" role="status">
               Solicitud aprobada
             </div>
           )}
 
           {isRechazada && (
-            <div className="solicitud-card__estado solicitud-card__estado--rechazada" role="status">
+            <div className="adopcion-card__estado adopcion-card__estado--rechazada" role="status">
               Solicitud rechazada
             </div>
           )}
 
           {(isNueva || isPendiente) && (
-            <section className="solicitud-card__form-section">
+            <section className="adopcion-card__form-section">
               <h2>{getFormTitle()}</h2>
 
               <form onSubmit={handleSubmit}>
-                <div className="solicitud-card__textarea-field">
+                <div className="adopcion-card__textarea-field">
                   <textarea
                     placeholder="¿Por qué querés adoptar este michi?"
                     required
@@ -242,7 +242,7 @@ function SolicitudAdopcionPage() {
                 {isPendiente && (
                   <button
                     type="button"
-                    className="solicitud-card__btn-cancelar"
+                    className="adopcion-card__btn-cancelar"
                     disabled={submitting || canceling}
                     onClick={handleCancelSolicitud}
                   >
@@ -254,13 +254,13 @@ function SolicitudAdopcionPage() {
           )}
 
           {(isAprobada || isRechazada) && (
-            <section className="solicitud-card__readonly">
+            <section className="adopcion-card__readonly">
               <h2>Detalle de tu solicitud</h2>
-              <div className="solicitud-card__readonly-item">
+              <div className="adopcion-card__readonly-item">
                 <span>Motivo</span>
                 <p>{solicitud.motivo}</p>
               </div>
-              <div className="solicitud-card__readonly-item">
+              <div className="adopcion-card__readonly-item">
                 <span>Teléfono de contacto</span>
                 <p>{solicitud.telefonoContacto}</p>
               </div>

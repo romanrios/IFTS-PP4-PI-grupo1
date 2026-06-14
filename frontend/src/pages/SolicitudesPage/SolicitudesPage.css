@@ -5,7 +5,7 @@
 }
 
 .solicitudes-list {
-  max-width: 900px;
+  max-width: 650px;
   margin: 0 auto;
 
   display: flex;
@@ -117,24 +117,27 @@
 }
 
 .btn-aprobar {
-  background: var(--color-success);
+  background: var(--color-primary);
 }
 
 .btn-rechazar {
-  background: var(--color-danger);
+  background: var(--color-primary);
 }
 
 .btn-pendiente {
-  background-color: var(--color-warning);
+  background-color: var(--color-primary);
   color: var(--color-black);
 }
 
 .btn-eliminar-solicitud {
-  background-color: var(--color-danger);
+  background-color: var(--color-primary);
 }
 
-.solicitud-card__estado {
-  margin: 0.75rem 0;
+.solicitud-card__meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
 }
 
 .estado-badge {
