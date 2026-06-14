@@ -14,6 +14,7 @@ function MichiDetailPage() {
   const { user } = useAuth();
 
   const [michi, setMichi] = useState(null);
+  const [solicitud, setSolicitud] = useState(null);
   const [solicitudes, setSolicitudes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [loadingSolicitudes, setLoadingSolicitudes] = useState(false);
@@ -28,6 +29,25 @@ function MichiDetailPage() {
       fetchSolicitudes();
     }
   }, [user?.isAdmin, michi]);
+
+  useEffect(() => {
+    if (!user || user.isAdmin) {
+      setSolicitud(null);
+      return;
+    }
+
+    const fetchMiSolicitud = async () => {
+      try {
+        const res = await api.get(`/solicitudes/michi/${id}`);
+        setSolicitud(res.data.existe ? res.data.solicitud : null);
+      } catch (error) {
+        console.error(error);
+        setSolicitud(null);
+      }
+    };
+
+    fetchMiSolicitud();
+  }, [id, user]);
 
   const fetchMichi = async () => {
     setLoading(true);
@@ -66,8 +86,10 @@ function MichiDetailPage() {
 
   const isAdopted = michi?.estadoAdopcion === "Adoptado";
   const isUnavailable = michi?.estadoAdopcion === "No publicado";
+  const isRejectedSolicitud = solicitud?.estadoSolicitud === "Rechazada";
   const canRequestAdoption =
     michi && !isAdopted && !isUnavailable && !user?.isAdmin;
+  const canRepostular = !user?.isAdmin && isRejectedSolicitud;
 
   const renderAction = () => {
     if (!user) {
@@ -90,6 +112,18 @@ function MichiDetailPage() {
           onClick={() => navigate(`/michis/editar/${id}`)}
         >
           Editar michi
+        </button>
+      );
+    }
+
+    if (canRepostular) {
+      return (
+        <button
+          type="button"
+          className="michi-detail__btn michi-detail__btn--primary"
+          onClick={() => navigate(`/adoptar/${id}`)}
+        >
+          Enviar nueva solicitud
         </button>
       );
     }

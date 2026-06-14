@@ -6,9 +6,9 @@ import SolicitudAdopcionSkeleton from "../../components/SolicitudAdopcionSkeleto
 import Spinner from "../../components/Spinner/Spinner";
 import TitleBar from "../../components/TitleBar/TitleBar";
 import {
-  confirmAlert,
-  errorAlert,
-  successAlert,
+    confirmAlert,
+    errorAlert,
+    successAlert,
 } from "../../utils/alerts";
 import { SOLICITUD_LIMITS, validateFields } from "../../utils/fieldLimits";
 
@@ -34,6 +34,7 @@ function SolicitudAdopcionPage() {
   const isAprobada = solicitud?.estadoSolicitud === "Aprobada";
   const isRechazada = solicitud?.estadoSolicitud === "Rechazada";
   const isNueva = !solicitud;
+  const canSubmit = isNueva || isPendiente || isRechazada;
 
   useEffect(() => {
     fetchData();
@@ -146,17 +147,20 @@ function SolicitudAdopcionPage() {
 
   const getTitle = () => {
     if (isPendiente) return "Editar solicitud";
-    if (isAprobada || isRechazada) return "Tu solicitud";
+    if (isAprobada) return "Tu solicitud";
+    if (isRechazada) return "Enviar nueva solicitud";
     return "Solicitud de adopción";
   };
 
   const getFormTitle = () => {
     if (isPendiente) return "Editá tu solicitud";
+    if (isRechazada) return "Completá tu nueva solicitud";
     return "Completá tu solicitud";
   };
 
   const getSubmitLabel = () => {
     if (isPendiente) return "Guardar cambios";
+    if (isRechazada) return "Enviar nueva solicitud";
     return "Enviar solicitud";
   };
 
@@ -185,7 +189,7 @@ function SolicitudAdopcionPage() {
             </div>
           )}
 
-          {(isNueva || isPendiente) && (
+          {canSubmit && (
             <section className="adopcion-card__form-section">
               <h2>{getFormTitle()}</h2>
 
@@ -249,7 +253,7 @@ function SolicitudAdopcionPage() {
             </section>
           )}
 
-          {(isAprobada || isRechazada) && (
+          {isAprobada && (
             <section className="adopcion-card__readonly">
               <h2>Detalle de tu solicitud</h2>
               <div className="adopcion-card__readonly-item">

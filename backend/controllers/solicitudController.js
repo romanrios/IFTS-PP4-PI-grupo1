@@ -59,13 +59,13 @@ export const createSolicitud = async (req, res) => {
       gato,
     });
 
-    if (solicitudExistente) {
+    if (solicitudExistente && solicitudExistente.estadoSolicitud !== "Rechazada") {
       return res.status(400).json({
         message: "Ya enviaste una solicitud para este michi",
       });
     }
 
-    // 4. Si pasa todos los filtros, se crea y guarda la solicitud
+    // 4. Si el usuario tenía una solicitud rechazada, podemos crear una nueva solicitud
     const nuevaSolicitud = new Solicitud({
       usuario,
       gato,
