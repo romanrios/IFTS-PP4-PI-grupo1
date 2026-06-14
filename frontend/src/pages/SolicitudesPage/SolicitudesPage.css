@@ -190,3 +190,19 @@
   color: #777;
   margin-top: 0.25rem;
 }
+
+/* Estilos para botones deshabilitados por estado */
+.solicitud-card__actions button:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+  pointer-events: none;
+  filter: grayscale(6%);
+  transform: none;
+}
+
+/* Variante más sutil para botones que queremos "aclarar" visualmente */
+.solicitud-card__actions button.btn--state-disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+  pointer-events: none;
+}

@@ -136,6 +136,12 @@ function SolicitudesPage() {
             const isHighlighted =
               s._id === highlightedSolicitudId ||
               (highlightedGatoId && gatoId === highlightedGatoId);
+            const estadoKey = (s.estadoSolicitud || "").toLowerCase();
+            const disabledByState = estadoKey === "eliminada";
+            const disableAprobar = Boolean(actionLoading) || disabledByState || estadoKey === "aprobada";
+            const disableRechazar = Boolean(actionLoading) || disabledByState || estadoKey === "rechazada";
+            const disablePendiente = Boolean(actionLoading) || disabledByState || estadoKey === "pendiente";
+            const disableEliminar = Boolean(actionLoading) || disabledByState;
 
             return (
             <article
@@ -184,7 +190,8 @@ function SolicitudesPage() {
               <div className="solicitud-card__actions">
                 <button
                   className="btn-aprobar"
-                  disabled={Boolean(actionLoading)}
+                  disabled={disableAprobar}
+                  title={disableAprobar ? (estadoKey === "aprobada" ? "Solicitud ya aprobada" : disabledByState ? "Solicitud eliminada" : "Acción en proceso") : "Aprobar solicitud"}
                   onClick={() => actualizarEstado(s, "Aprobada")}
                 >
                   {actionLoading === getActionKey(s._id, "Aprobada") ? (
@@ -196,7 +203,8 @@ function SolicitudesPage() {
 
                 <button
                   className="btn-rechazar"
-                  disabled={Boolean(actionLoading)}
+                  disabled={disableRechazar}
+                  title={disableRechazar ? (estadoKey === "rechazada" ? "Solicitud ya rechazada" : disabledByState ? "Solicitud eliminada" : "Acción en proceso") : "Rechazar solicitud"}
                   onClick={() => actualizarEstado(s, "Rechazada")}
                 >
                   {actionLoading === getActionKey(s._id, "Rechazada") ? (
@@ -208,7 +216,8 @@ function SolicitudesPage() {
 
                 <button
                   className="btn-pendiente"
-                  disabled={Boolean(actionLoading)}
+                  disabled={disablePendiente}
+                  title={disablePendiente ? (estadoKey === "pendiente" ? "Solicitud ya en pendiente" : disabledByState ? "Solicitud eliminada" : "Acción en proceso") : "Marcar como pendiente"}
                   onClick={() => actualizarEstado(s, "Pendiente")}
                 >
                   {actionLoading === getActionKey(s._id, "Pendiente") ? (
@@ -220,7 +229,8 @@ function SolicitudesPage() {
 
                 <button
                   className="btn-eliminar-solicitud"
-                  disabled={Boolean(actionLoading)}
+                  disabled={disableEliminar}
+                  title={disableEliminar ? (disabledByState ? "Solicitud eliminada" : "Acción en proceso") : "Eliminar solicitud"}
                   onClick={() => eliminarSolicitud(s)}
                 >
                   {actionLoading === getActionKey(s._id, "eliminar") ? (
