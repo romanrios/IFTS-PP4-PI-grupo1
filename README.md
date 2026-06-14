@@ -289,7 +289,10 @@ CLOUDINARY_API_SECRET=
 
 ## Frontend
 
-Configurar las variables necesarias para la URL del backend y autenticación según el entorno de despliegue.
+```env
+VITE_API_URL=
+VITE_GOOGLE_CLIENT_ID=
+```
 
 ---
 
@@ -298,8 +301,8 @@ Configurar las variables necesarias para la URL del backend y autenticación seg
 ## Clonar repositorio
 
 ```bash
-git clone <repository-url>
-cd proyecto
+git clone https://github.com/romanrios/IFTS-PP4-PI-grupo1/
+cd ifts-pp4-pi-grupo1
 ```
 
 ## Backend
@@ -311,6 +314,8 @@ npm run dev
 ```
 
 ## Frontend
+
+En otra terminal:
 
 ```bash
 cd frontend
