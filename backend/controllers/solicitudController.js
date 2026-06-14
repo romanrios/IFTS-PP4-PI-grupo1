@@ -2,6 +2,26 @@ import mongoose from "mongoose";
 import Gato from "../models/Gato.js";
 import Solicitud from "../models/Solicitud.js";
 
+const actualizarEstadoGato = async (gatoId) => {
+  if (!mongoose.Types.ObjectId.isValid(gatoId)) {
+    return;
+  }
+
+  const gatoDB = await Gato.findById(gatoId);
+  if (!gatoDB || gatoDB.estadoAdopcion === "Adoptado") {
+    return;
+  }
+
+  const solicitudesPendientes = await Solicitud.countDocuments({
+    gato: gatoId,
+    estadoSolicitud: "Pendiente",
+  });
+
+  await Gato.findByIdAndUpdate(gatoId, {
+    estadoAdopcion: solicitudesPendientes > 0 ? "Con solicitudes" : "Publicado",
+  });
+};
+
 // @desc    Crear una nueva solicitud de adopción (Cuando el usuario aprieta "Adoptar")
 // @route   POST /api/solicitudes
 export const createSolicitud = async (req, res) => {
@@ -183,7 +203,9 @@ export const deleteMiSolicitud = async (req, res) => {
       });
     }
 
+    const gatoId = solicitud.gato;
     await solicitud.deleteOne();
+    await actualizarEstadoGato(gatoId);
 
     res.status(200).json({
       message: "Solicitud cancelada correctamente",
@@ -298,6 +320,10 @@ export const updateEstadoSolicitud = async (req, res) => {
     // 3. Confirmar todos los cambios
     await session.commitTransaction();
 
+    if (estadoSolicitud === "Rechazada") {
+      await actualizarEstadoGato(solicitudActualizada.gato);
+    }
+
     return res.status(200).json(solicitudActualizada);
   } catch (error) {
     await session.abortTransaction();
@@ -328,6 +354,8 @@ export const deleteSolicitud = async (req, res) => {
         message: "Solicitud no encontrada",
       });
     }
+
+    await actualizarEstadoGato(solicitud.gato);
 
     res.status(200).json({
       message: "Solicitud eliminada correctamente",
