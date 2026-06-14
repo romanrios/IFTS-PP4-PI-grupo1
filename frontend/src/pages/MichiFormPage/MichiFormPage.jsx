@@ -21,6 +21,9 @@ function MichiFormPage() {
     foto: "",
     estadoAdopcion: "Publicado",
   });
+  const [imageFile, setImageFile] = useState(null);
+  const [filePreviewUrl, setFilePreviewUrl] = useState(null);
+  const [fileError, setFileError] = useState("");
   const [loadingData, setLoadingData] = useState(isEdit);
   const [submitting, setSubmitting] = useState(false);
 
@@ -29,6 +32,18 @@ function MichiFormPage() {
       loadMichi();
     }
   }, [id]);
+
+  useEffect(() => {
+    if (!imageFile) {
+      setFilePreviewUrl(null);
+      return;
+    }
+
+    const objectUrl = URL.createObjectURL(imageFile);
+    setFilePreviewUrl(objectUrl);
+
+    return () => URL.revokeObjectURL(objectUrl);
+  }, [imageFile]);
 
   const loadMichi = async () => {
     setLoadingData(true);
@@ -51,21 +66,64 @@ function MichiFormPage() {
     });
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setFileError("");
+
+    if (!file) {
+      setImageFile(null);
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      setFileError("Solo se permiten archivos de imagen (jpg, png, gif, webp, etc.).");
+      e.target.value = "";
+      setImageFile(null);
+      return;
+    }
+
+    setImageFile(file);
+  };
+
+  const buildPayload = () => {
+    if (imageFile) {
+      const formData = new FormData();
+      formData.append("nombre", form.nombre);
+      formData.append("edadAprox", form.edadAprox);
+      formData.append("sexo", form.sexo);
+      formData.append("descripcion", form.descripcion);
+      formData.append("estadoAdopcion", form.estadoAdopcion);
+      formData.append("foto", imageFile);
+      return formData;
+    }
+
+    return form;
+  };
+
+  const previewSrc = imageFile ? filePreviewUrl : form.foto || null;
+  const showFilePriorityHint = Boolean(imageFile && form.foto);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (fileError) {
+      return;
+    }
 
     setSubmitting(true);
 
     try {
+      const payload = buildPayload();
+
       if (isEdit) {
-        await api.put(`/gatos/${id}`, form);
+        await api.put(`/gatos/${id}`, payload);
 
         await successAlert(
           "Cambios guardados",
           "La información fue actualizada.",
         );
       } else {
-        await api.post("/gatos", form);
+        await api.post("/gatos", payload);
 
         await successAlert(
           "Michi creado",
@@ -114,12 +172,43 @@ function MichiFormPage() {
           <option value="H">Hembra</option>
         </select>
 
-        <input
-          name="foto"
-          placeholder="URL foto"
-          value={form.foto}
-          onChange={handleChange}
-        />
+        <div className="michi-form__foto-section">
+          <input
+            name="foto"
+            placeholder="URL foto"
+            value={form.foto}
+            onChange={handleChange}
+          />
+
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handleFileChange}
+            className="michi-form__file-input"
+          />
+
+          <p className="michi-form__foto-hint">
+            Podés ingresar una URL o seleccionar un archivo local.
+          </p>
+
+          {showFilePriorityHint && (
+            <p className="michi-form__foto-hint michi-form__foto-hint--priority">
+              Si completaste ambas opciones, se utilizará la imagen del archivo seleccionado.
+            </p>
+          )}
+
+          {fileError && (
+            <p className="michi-form__foto-error" role="alert">
+              {fileError}
+            </p>
+          )}
+
+          {previewSrc && (
+            <div className="michi-form__foto-preview">
+              <img src={previewSrc} alt="Vista previa de la foto" />
+            </div>
+          )}
+        </div>
 
         <select
           name="estadoAdopcion"
