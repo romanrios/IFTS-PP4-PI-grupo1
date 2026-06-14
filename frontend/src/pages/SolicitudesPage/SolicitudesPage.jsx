@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import api from "../../api";
 import TitleBar from "../../components/TitleBar/TitleBar";
 import SolicitudCardSkeleton from "../../components/SolicitudCardSkeleton/SolicitudCardSkeleton";
@@ -7,6 +8,10 @@ import { confirmAlert, deleteConfirmAlert, errorAlert, successAlert } from "../.
 import "./SolicitudesPage.css";
 
 function SolicitudesPage() {
+  const [searchParams] = useSearchParams();
+  const highlightedSolicitudId = searchParams.get("solicitud");
+  const highlightedGatoId = searchParams.get("gato");
+
   const [solicitudes, setSolicitudes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
@@ -28,6 +33,16 @@ function SolicitudesPage() {
   useEffect(() => {
     fetchSolicitudes();
   }, []);
+
+  useEffect(() => {
+    if (!loading && highlightedSolicitudId) {
+      const element = document.getElementById(`solicitud-${highlightedSolicitudId}`);
+
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+  }, [loading, highlightedSolicitudId, solicitudes]);
 
   const actualizarEstado = async (solicitud, estadoSolicitud) => {
     const acciones = {
@@ -116,8 +131,24 @@ function SolicitudesPage() {
         <p>No hay solicitudes registradas.</p>
       ) : (
         <div className="solicitudes-list">
-          {solicitudes.map((s) => (
-            <article key={s._id} className="solicitud-card">
+          {solicitudes.map((s) => {
+            const gatoId = s.gato?._id ?? s.gato;
+            const isHighlighted =
+              s._id === highlightedSolicitudId ||
+              (highlightedGatoId && gatoId === highlightedGatoId);
+            const estadoKey = (s.estadoSolicitud || "").toLowerCase();
+            const disabledByState = estadoKey === "eliminada";
+            const disableAprobar = Boolean(actionLoading) || disabledByState || estadoKey === "aprobada";
+            const disableRechazar = Boolean(actionLoading) || disabledByState || estadoKey === "rechazada";
+            const disablePendiente = Boolean(actionLoading) || disabledByState || estadoKey === "pendiente";
+            const disableEliminar = Boolean(actionLoading) || disabledByState;
+
+            return (
+            <article
+              key={s._id}
+              id={`solicitud-${s._id}`}
+              className={`solicitud-card ${isHighlighted ? "solicitud-card--highlighted" : ""}`}
+            >
               <div className="solicitud-card__header">
                 <img src={s.gato?.foto} alt={s.gato?.nombre} />
 
@@ -159,7 +190,8 @@ function SolicitudesPage() {
               <div className="solicitud-card__actions">
                 <button
                   className="btn-aprobar"
-                  disabled={Boolean(actionLoading)}
+                  disabled={disableAprobar}
+                  title={disableAprobar ? (estadoKey === "aprobada" ? "Solicitud ya aprobada" : disabledByState ? "Solicitud eliminada" : "Acción en proceso") : "Aprobar solicitud"}
                   onClick={() => actualizarEstado(s, "Aprobada")}
                 >
                   {actionLoading === getActionKey(s._id, "Aprobada") ? (
@@ -171,7 +203,8 @@ function SolicitudesPage() {
 
                 <button
                   className="btn-rechazar"
-                  disabled={Boolean(actionLoading)}
+                  disabled={disableRechazar}
+                  title={disableRechazar ? (estadoKey === "rechazada" ? "Solicitud ya rechazada" : disabledByState ? "Solicitud eliminada" : "Acción en proceso") : "Rechazar solicitud"}
                   onClick={() => actualizarEstado(s, "Rechazada")}
                 >
                   {actionLoading === getActionKey(s._id, "Rechazada") ? (
@@ -183,7 +216,8 @@ function SolicitudesPage() {
 
                 <button
                   className="btn-pendiente"
-                  disabled={Boolean(actionLoading)}
+                  disabled={disablePendiente}
+                  title={disablePendiente ? (estadoKey === "pendiente" ? "Solicitud ya en pendiente" : disabledByState ? "Solicitud eliminada" : "Acción en proceso") : "Marcar como pendiente"}
                   onClick={() => actualizarEstado(s, "Pendiente")}
                 >
                   {actionLoading === getActionKey(s._id, "Pendiente") ? (
@@ -195,7 +229,8 @@ function SolicitudesPage() {
 
                 <button
                   className="btn-eliminar-solicitud"
-                  disabled={Boolean(actionLoading)}
+                  disabled={disableEliminar}
+                  title={disableEliminar ? (disabledByState ? "Solicitud eliminada" : "Acción en proceso") : "Eliminar solicitud"}
                   onClick={() => eliminarSolicitud(s)}
                 >
                   {actionLoading === getActionKey(s._id, "eliminar") ? (
@@ -206,7 +241,8 @@ function SolicitudesPage() {
                 </button>
               </div>
             </article>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

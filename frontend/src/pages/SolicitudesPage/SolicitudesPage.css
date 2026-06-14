@@ -39,6 +39,11 @@
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
 }
 
+.solicitud-card--highlighted {
+  border: 2px solid var(--color-primary);
+  box-shadow: 0 8px 18px rgba(255, 109, 64, 0.25);
+}
+
 .solicitud-card__header {
   display: flex;
   align-items: center;
@@ -184,4 +189,20 @@
   font-size: 0.85rem;
   color: #777;
   margin-top: 0.25rem;
+}
+
+/* Estilos para botones deshabilitados por estado */
+.solicitud-card__actions button:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+  pointer-events: none;
+  filter: grayscale(6%);
+  transform: none;
+}
+
+/* Variante más sutil para botones que queremos "aclarar" visualmente */
+.solicitud-card__actions button.btn--state-disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+  pointer-events: none;
 }
