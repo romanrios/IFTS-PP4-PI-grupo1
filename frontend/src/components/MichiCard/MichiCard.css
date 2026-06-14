@@ -31,6 +31,54 @@
   font-weight: 800;
 }
 
+.michi-card__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.michi-card__estado {
+  display: inline-block;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.michi-card__estado--publicado {
+  background: rgba(72, 207, 196, 0.2);
+  color: #1f8f86;
+}
+
+.michi-card__estado--con-solicitudes {
+  background: rgba(255, 193, 7, 0.2);
+  color: #9a6b00;
+}
+
+.michi-card__estado--adoptado {
+  background: rgba(40, 167, 69, 0.15);
+  color: #198754;
+}
+
+.michi-card__estado--no-publicado {
+  background: rgba(108, 117, 125, 0.15);
+  color: var(--color-gray-700);
+}
+
+.michi-card__solicitudes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
 .michi-card__description {
   color: var(--color-text-muted);
   margin-bottom: 1rem;
@@ -84,4 +132,81 @@
 /* Estilos botón del usuario adoptante */
 .michi-card__btn-adoptar {
   font-weight: 700;
+}
+
+.michi-card__adoptado {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 45px;
+  border-radius: 10px;
+  background-color: var(--color-gray-400);
+  color: var(--color-white);
+  font-weight: 700;
+  cursor: default;
+  user-select: none;
+}
+
+.michi-card__solicitud-aprobada {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 45px;
+  border-radius: 10px;
+  background-color: rgba(40, 167, 69, 0.15);
+  color: #198754;
+  font-weight: 700;
+  cursor: default;
+  user-select: none;
+}
+
+.michi-card__solicitud-rechazada {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 45px;
+  border-radius: 10px;
+  background-color: rgba(220, 53, 69, 0.15);
+  color: var(--color-danger);
+  font-weight: 700;
+  cursor: default;
+  user-select: none;
+}
+
+.michi-card__solicitud-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.michi-card__btn-editar-solicitud {
+  font-weight: 700;
+  background-color: var(--color-secondary) !important;
+}
+
+.michi-card__btn-editar-solicitud:hover:not(:disabled) {
+  background-color: var(--color-secondary-dark) !important;
+}
+
+.michi-card__btn-editar-solicitud:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.michi-card__btn-cancelar-solicitud {
+  font-weight: 700;
+  background-color: var(--color-danger) !important;
+}
+
+.michi-card__btn-cancelar-solicitud:hover:not(:disabled) {
+  background-color: var(--color-danger-dark) !important;
+}
+
+.michi-card__btn-cancelar-solicitud:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }

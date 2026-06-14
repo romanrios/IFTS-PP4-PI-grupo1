@@ -8,8 +8,48 @@ import { useAuth } from "../../context/AuthContext";
 import { errorAlert } from "../../utils/alerts";
 import "./MichisPages.css";
 
+const buildSolicitudResumenMap = (solicitudes) => {
+  const map = {};
+
+  solicitudes.forEach((solicitud) => {
+    const gatoId = solicitud.gato?._id ?? solicitud.gato;
+
+    if (!gatoId) return;
+
+    if (!map[gatoId]) {
+      map[gatoId] = { pendientes: 0, aprobadas: 0, rechazadas: 0 };
+    }
+
+    if (solicitud.estadoSolicitud === "Pendiente") {
+      map[gatoId].pendientes += 1;
+    } else if (solicitud.estadoSolicitud === "Aprobada") {
+      map[gatoId].aprobadas += 1;
+    } else if (solicitud.estadoSolicitud === "Rechazada") {
+      map[gatoId].rechazadas += 1;
+    }
+  });
+
+  return map;
+};
+
+const buildMisSolicitudesMap = (solicitudes) => {
+  const map = {};
+
+  solicitudes.forEach((solicitud) => {
+    const gatoId = solicitud.gato?._id ?? solicitud.gato;
+
+    if (gatoId) {
+      map[gatoId] = solicitud;
+    }
+  });
+
+  return map;
+};
+
 function MichisPage() {
   const [michis, setMichis] = useState([]);
+  const [solicitudResumenMap, setSolicitudResumenMap] = useState({});
+  const [misSolicitudesMap, setMisSolicitudesMap] = useState({});
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
   const [pagination, setPagination] = useState({
@@ -27,6 +67,14 @@ function MichisPage() {
       const res = await api.get("/gatos", { params: { page, limit: 12 } });
       setMichis(res.data.data);
       setPagination(res.data.pagination);
+
+      if (user?.isAdmin) {
+        const solicitudesRes = await api.get("/solicitudes");
+        setSolicitudResumenMap(buildSolicitudResumenMap(solicitudesRes.data));
+      } else if (user) {
+        const misSolicitudesRes = await api.get("/solicitudes/mis");
+        setMisSolicitudesMap(buildMisSolicitudesMap(misSolicitudesRes.data));
+      }
     } catch (error) {
       console.error("Error al obtener los michis:", error);
       errorAlert("Error", error);
@@ -37,10 +85,18 @@ function MichisPage() {
 
   useEffect(() => {
     fetchMichis();
-  }, [page]);
+  }, [page, user?.isAdmin, user?._id]);
 
   const handleDeleteMichi = (id) => {
     setMichis((prev) => prev.filter((michi) => michi._id !== id));
+  };
+
+  const handleCancelSolicitud = (gatoId) => {
+    setMisSolicitudesMap((prev) => {
+      const next = { ...prev };
+      delete next[gatoId];
+      return next;
+    });
   };
 
   return (
@@ -67,6 +123,19 @@ function MichisPage() {
                   key={michi._id}
                   michi={michi}
                   onDelete={handleDeleteMichi}
+                  onCancelSolicitud={handleCancelSolicitud}
+                  solicitudResumen={
+                    user?.isAdmin
+                      ? solicitudResumenMap[michi._id] ?? {
+                          pendientes: 0,
+                          aprobadas: 0,
+                          rechazadas: 0,
+                        }
+                      : undefined
+                  }
+                  miSolicitud={
+                    !user?.isAdmin ? misSolicitudesMap[michi._id] : undefined
+                  }
                 />
               ))}
             </div>

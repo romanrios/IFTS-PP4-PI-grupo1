@@ -67,6 +67,19 @@
   justify-content: center;
 }
 
+.solicitud-card__btn-cancelar {
+  background: var(--color-danger) !important;
+}
+
+.solicitud-card__btn-cancelar:hover:not(:disabled) {
+  background: var(--color-danger-dark) !important;
+}
+
+.solicitud-card__btn-cancelar:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
 .solicitud-card__textarea-field {
   display: flex;
   flex-direction: column;
@@ -85,4 +98,53 @@
   font-size: 0.85rem;
   color: var(--color-text-muted);
   font-weight: 600;
+}
+
+.solicitud-card__estado {
+  padding: 1rem;
+  border-radius: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.solicitud-card__estado--aprobada {
+  background: rgba(40, 167, 69, 0.15);
+  color: #198754;
+}
+
+.solicitud-card__estado--rechazada {
+  background: rgba(220, 53, 69, 0.15);
+  color: var(--color-danger);
+}
+
+.solicitud-card__readonly {
+  border-top: 1px solid var(--color-border);
+  padding-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.solicitud-card__readonly h2 {
+  color: var(--color-secondary);
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.solicitud-card__readonly-item span {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 0.35rem;
+}
+
+.solicitud-card__readonly-item p {
+  margin: 0;
+  color: var(--color-secondary);
+  line-height: 1.6;
+  white-space: pre-wrap;
 }
