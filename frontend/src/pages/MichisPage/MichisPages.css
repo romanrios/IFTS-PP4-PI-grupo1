@@ -38,12 +38,49 @@
 
 }
 
+.michis-filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.michis-filters__search {
+  flex: 1;
+  min-width: 200px;
+  padding: 10px 15px;
+  border: 1px solid var(--color-border, #ccc);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+}
+
+.michis-filters__select {
+  padding: 10px 15px;
+  border: 1px solid var(--color-border, #ccc);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  background-color: var(--color-white);
+  cursor: pointer;
+  min-width: 150px;
+}
+
+.michis-filters__search:focus,
+.michis-filters__select:focus {
+  outline: none;
+  border-color: var(--color-aux);
+  box-shadow: 0 0 0 2px rgba(var(--color-aux-rgb), 0.1);
+}
+
 .michis-pagination {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 1rem;
-  margin-top: 1.5rem;
+  margin-top: 2rem;
+    margin-bottom: 2rem;
+
 }
 
 .michis-pagination button {

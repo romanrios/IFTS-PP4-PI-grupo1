@@ -245,10 +245,34 @@ export const getSolicitudesByGato = async (req, res) => {
 // @route   GET /api/solicitudes
 export const getSolicitudes = async (req, res) => {
   try {
-    // El .populate trae los datos reales vinculados de las colecciones de usuarios y gatos
-    const solicitudes = await Solicitud.find()
-      .populate("usuario", "name email") // Trae solo nombre y mail del adoptante
-      .populate("gato", "nombre foto estadoAdopcion"); // Trae datos clave del michi
+    // Parámetros de filtrado
+    const estadoSolicitud = req.query.estadoSolicitud ? req.query.estadoSolicitud.trim() : "";
+    const search = req.query.search ? req.query.search.trim() : "";
+    const sortOrder = parseInt(req.query.sort, 10) || -1; // -1 = más recientes, 1 = más antiguos
+
+    // Construir filtro base
+    let matchFilter = {};
+    if (estadoSolicitud) {
+      matchFilter.estadoSolicitud = estadoSolicitud;
+    }
+
+    // Obtener solicitudes con filtros
+    let query = Solicitud.find(matchFilter)
+      .populate("usuario", "name email")
+      .populate("gato", "nombre foto estadoAdopcion")
+      .sort({ createdAt: sortOrder });
+
+    let solicitudes = await query;
+
+    // Filtrar por búsqueda de texto si se proporciona
+    if (search) {
+      const searchRegex = new RegExp(search, "i");
+      solicitudes = solicitudes.filter((s) => {
+        const gatoNombre = s.gato?.nombre || "";
+        const usuarioNombre = s.usuario?.name || "";
+        return searchRegex.test(gatoNombre) || searchRegex.test(usuarioNombre);
+      });
+    }
 
     res.status(200).json(solicitudes);
   } catch (error) {
