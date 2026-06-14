@@ -50,19 +50,15 @@ function SolicitudAdopcionPage() {
       const michiRes = await api.get(`/gatos/${id}`);
       setMichi(michiRes.data);
 
-      try {
-        const solicitudRes = await api.get(`/solicitudes/michi/${id}`);
-        setSolicitud(solicitudRes.data);
+      const solicitudRes = await api.get(`/solicitudes/michi/${id}`);
+      if (solicitudRes.data.existe) {
+        setSolicitud(solicitudRes.data.solicitud);
         setForm({
-          motivo: solicitudRes.data.motivo,
-          telefonoContacto: solicitudRes.data.telefonoContacto,
+          motivo: solicitudRes.data.solicitud.motivo,
+          telefonoContacto: solicitudRes.data.solicitud.telefonoContacto,
         });
-      } catch (error) {
-        if (error.response?.status === 404) {
-          setSolicitud(null);
-        } else {
-          throw error;
-        }
+      } else {
+        setSolicitud(null);
       }
     } catch (error) {
       console.error(error);

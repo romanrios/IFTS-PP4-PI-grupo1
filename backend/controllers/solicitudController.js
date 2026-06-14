@@ -119,12 +119,16 @@ export const getMiSolicitudByGato = async (req, res) => {
     });
 
     if (!solicitud) {
-      return res.status(404).json({
-        message: "No tenés una solicitud para este michi",
+      return res.status(200).json({
+        existe: false,
+        solicitud: null,
       });
     }
 
-    res.status(200).json(solicitud);
+    res.status(200).json({
+      existe: true,
+      solicitud,
+    });
   } catch (error) {
     res.status(500).json({
       message: "Error al obtener la solicitud",
