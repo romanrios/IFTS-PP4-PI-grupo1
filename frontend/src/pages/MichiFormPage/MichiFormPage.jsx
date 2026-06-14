@@ -5,6 +5,7 @@ import MichiFormSkeleton from "../../components/MichiFormSkeleton/MichiFormSkele
 import Spinner from "../../components/Spinner/Spinner";
 import TitleBar from "../../components/TitleBar/TitleBar";
 import { errorAlert, successAlert } from "../../utils/alerts";
+import { GATO_LIMITS, getLengthError, validateFields } from "../../utils/fieldLimits";
 import "./MichiFormPage.css";
 
 function MichiFormPage() {
@@ -24,6 +25,7 @@ function MichiFormPage() {
   const [imageFile, setImageFile] = useState(null);
   const [filePreviewUrl, setFilePreviewUrl] = useState(null);
   const [fileError, setFileError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
   const [loadingData, setLoadingData] = useState(isEdit);
   const [submitting, setSubmitting] = useState(false);
 
@@ -44,6 +46,28 @@ function MichiFormPage() {
 
     return () => URL.revokeObjectURL(objectUrl);
   }, [imageFile]);
+
+  const getFormErrors = () => {
+    const errors = validateFields(form, GATO_LIMITS, {
+      foto: { allowEmpty: true },
+    });
+
+    if (!imageFile && form.foto) {
+      const fotoError = getLengthError(form.foto, GATO_LIMITS.foto);
+
+      if (fotoError) {
+        errors.foto = fotoError;
+      }
+    } else {
+      delete errors.foto;
+    }
+
+    return errors;
+  };
+
+  useEffect(() => {
+    setFieldErrors(getFormErrors());
+  }, [form, imageFile]);
 
   const loadMichi = async () => {
     setLoadingData(true);
@@ -102,11 +126,16 @@ function MichiFormPage() {
 
   const previewSrc = imageFile ? filePreviewUrl : form.foto || null;
   const showFilePriorityHint = Boolean(imageFile && form.foto);
+  const hasValidationErrors =
+    Object.keys(fieldErrors).length > 0 || Boolean(fileError);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (fileError) {
+    const errors = getFormErrors();
+    setFieldErrors(errors);
+
+    if (fileError || Object.keys(errors).length > 0) {
       return;
     }
 
@@ -156,16 +185,26 @@ function MichiFormPage() {
           placeholder="Nombre"
           value={form.nombre}
           onChange={handleChange}
+          minLength={GATO_LIMITS.nombre.min}
+          maxLength={GATO_LIMITS.nombre.max}
           required
         />
+        {fieldErrors.nombre && (
+          <p className="form-field-error" role="alert">{fieldErrors.nombre}</p>
+        )}
 
         <input
           name="edadAprox"
           placeholder="Edad aproximada"
           value={form.edadAprox}
           onChange={handleChange}
+          minLength={GATO_LIMITS.edadAprox.min}
+          maxLength={GATO_LIMITS.edadAprox.max}
           required
         />
+        {fieldErrors.edadAprox && (
+          <p className="form-field-error" role="alert">{fieldErrors.edadAprox}</p>
+        )}
 
         <select name="sexo" value={form.sexo} onChange={handleChange}>
           <option value="M">Macho</option>
@@ -178,7 +217,11 @@ function MichiFormPage() {
             placeholder="URL foto"
             value={form.foto}
             onChange={handleChange}
+            maxLength={GATO_LIMITS.foto.max}
           />
+          {fieldErrors.foto && (
+            <p className="form-field-error" role="alert">{fieldErrors.foto}</p>
+          )}
 
           <input
             type="file"
@@ -221,16 +264,26 @@ function MichiFormPage() {
           <option value="No publicado">No publicado</option>
         </select>
 
-        <textarea
-          name="descripcion"
-          placeholder="Descripción"
-          rows="5"
-          value={form.descripcion}
-          onChange={handleChange}
-          required
-        />
+        <div className="michi-form__textarea-field">
+          <textarea
+            name="descripcion"
+            placeholder="Descripción"
+            rows="5"
+            value={form.descripcion}
+            onChange={handleChange}
+            minLength={GATO_LIMITS.descripcion.min}
+            maxLength={GATO_LIMITS.descripcion.max}
+            required
+          />
+          <span className="form-char-counter">
+            {form.descripcion.length} / {GATO_LIMITS.descripcion.max}
+          </span>
+          {fieldErrors.descripcion && (
+            <p className="form-field-error" role="alert">{fieldErrors.descripcion}</p>
+          )}
+        </div>
 
-        <button type="submit" disabled={submitting}>
+        <button type="submit" disabled={submitting || hasValidationErrors}>
           {submitting ? (
             <Spinner />
           ) : isEdit ? (
