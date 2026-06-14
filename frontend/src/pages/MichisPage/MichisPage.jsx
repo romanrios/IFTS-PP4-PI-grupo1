@@ -122,6 +122,30 @@ function MichisPage() {
     });
   };
 
+  const sortedMichis = user && !user.isAdmin
+    ? [...michis].sort((a, b) => {
+        const getPriority = (michi) => {
+          const solicitud = misSolicitudesMap[michi._id];
+
+          if (!solicitud) {
+            return 2;
+          }
+
+          if (solicitud.estadoSolicitud === "Aprobada" || solicitud.estadoSolicitud === "Pendiente") {
+            return 0;
+          }
+
+          if (solicitud.estadoSolicitud === "Rechazada") {
+            return 1;
+          }
+
+          return 2;
+        };
+
+        return getPriority(a) - getPriority(b);
+      })
+    : michis;
+
   return (
 
 
@@ -172,7 +196,7 @@ function MichisPage() {
         ) : (
           <>
             <div className="michis-grid">
-              {michis.map((michi) => (
+              {sortedMichis.map((michi) => (
                 <MichiCard
                   key={michi._id}
                   michi={michi}
