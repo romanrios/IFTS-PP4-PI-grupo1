@@ -26,7 +26,7 @@ Año 2026
 
 ## Descripción del proyecto
 
-MichiGestión es una aplicación MERN para gestión de adopción de gatos. Permite a adoptantes visualizar animales disponibles y enviar solicitudes de adopción, y a administradores gestionar catálogos, revisar solicitudes y automatizar procesos de aprobación.
+MichiGestión es una aplicación MERN para gestión de adopción de gatos. Permite a adoptantes visualizar michis disponibles y enviar solicitudes de adopción, y a administradores gestionar catálogos, revisar solicitudes y automatizar procesos de aprobación.
 
 ---
 
@@ -80,7 +80,7 @@ Existen dos tipos de usuarios:
 #### Adoptante
 
 * Ver gatos publicados
-* Consultar detalles de animales
+* Consultar detalles de gatos
 * Enviar solicitudes de adopción
 * Editar solicitudes pendientes
 * Cancelar solicitudes propias
