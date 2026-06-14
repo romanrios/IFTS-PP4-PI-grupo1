@@ -7,6 +7,14 @@ import TitleBar from "../../components/TitleBar/TitleBar";
 import { useAuth } from "../../context/AuthContext";
 import { errorAlert } from "../../utils/alerts";
 import "./MichisPages.css";
+import { ChevronLeft, ChevronRight} from "lucide-react";
+
+const normalizeText = (text) => {
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+};
 
 const buildSolicitudResumenMap = (solicitudes) => {
   const map = {};
@@ -52,6 +60,9 @@ function MichisPage() {
   const [misSolicitudesMap, setMisSolicitudesMap] = useState({});
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
+  const [searchNombre, setSearchNombre] = useState("");
+  const [filterEstado, setFilterEstado] = useState("");
+  const [sortOrder, setSortOrder] = useState(-1);
   const [pagination, setPagination] = useState({
     page: 1,
     limit: 12,
@@ -64,7 +75,15 @@ function MichisPage() {
   const fetchMichis = async () => {
     setLoading(true);
     try {
-      const res = await api.get("/gatos", { params: { page, limit: 12 } });
+      const params = { 
+        page, 
+        limit: 12,
+        ...(searchNombre && { nombre: searchNombre }),
+        ...(filterEstado && { estadoAdopcion: filterEstado }),
+        ...(sortOrder !== -1 && { sort: sortOrder }),
+      };
+      
+      const res = await api.get("/gatos", { params });
       setMichis(res.data.data);
       setPagination(res.data.pagination);
 
@@ -84,8 +103,12 @@ function MichisPage() {
   };
 
   useEffect(() => {
+    setPage(1);
+  }, [searchNombre, filterEstado, sortOrder]);
+
+  useEffect(() => {
     fetchMichis();
-  }, [page, user?.isAdmin, user?._id]);
+  }, [page, searchNombre, filterEstado, sortOrder, user?.isAdmin, user?._id]);
 
   const handleDeleteMichi = (id) => {
     setMichis((prev) => prev.filter((michi) => michi._id !== id));
@@ -108,6 +131,37 @@ function MichisPage() {
           backTo={user?.isAdmin && "/admin"}
         />
         {user?.isAdmin && <button className="btn-add" onClick={() => navigate("/michis/nuevo")}>+ Agregar michi</button>}
+
+        {user?.isAdmin && (
+          <div className="michis-filters">
+            <input
+              type="text"
+              placeholder="Buscar por nombre..."
+              value={searchNombre}
+              onChange={(e) => setSearchNombre(e.target.value)}
+              className="michis-filters__search"
+            />
+            <select
+              value={filterEstado}
+              onChange={(e) => setFilterEstado(e.target.value)}
+              className="michis-filters__select"
+            >
+              <option value="">Todos los estados</option>
+              <option value="No publicado">No publicado</option>
+              <option value="Publicado">Publicado</option>
+              <option value="Con solicitudes">Con solicitudes</option>
+              <option value="Adoptado">Adoptado</option>
+            </select>
+            <select
+              value={sortOrder}
+              onChange={(e) => setSortOrder(parseInt(e.target.value))}
+              className="michis-filters__select"
+            >
+              <option value={-1}>Más recientes</option>
+              <option value={1}>Más antiguos</option>
+            </select>
+          </div>
+        )}
 
         {loading ? (
           <div className="michis-grid">
@@ -145,7 +199,7 @@ function MichisPage() {
                 onClick={() => setPage((prev) => prev - 1)}
                 disabled={pagination.page <= 1}
               >
-                Anterior
+                <ChevronLeft />
               </button>
               <span className="michis-pagination__info">
                 Página {pagination.page} de {pagination.totalPages}
@@ -155,7 +209,7 @@ function MichisPage() {
                 onClick={() => setPage((prev) => prev + 1)}
                 disabled={pagination.page >= pagination.totalPages}
               >
-                Siguiente
+                <ChevronRight />
               </button>
             </div>
           </>

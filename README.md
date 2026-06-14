@@ -1,254 +1,152 @@
-# Práctica Profesionalizante 4 - Proyecto Integrador Final
+# MichiGestión
 
-<img alt="MichiGestion" src="https://github.com/user-attachments/assets/a792fd79-ed8e-4464-a2d4-c0ff39603035" />
+<img alt="MichiGestión" src="https://github.com/user-attachments/assets/a792fd79-ed8e-4464-a2d4-c0ff39603035" />
 
-## Comisión 3A - Grupo 1
+Sistema web para la gestión de adopciones de gatos.
 
-- Córdoba, Daniel Ignacio
+Desarrollado como Proyecto Integrador de Práctica Profesionalizante IV de la Tecnicatura Superior en Desarrollo de Software del Instituto de Formación Técnica Superior N° 29.
 
-- Giménez, Mariela Belén
-
-- Gómez, Cecilia Daniela
-
-- Lucchelli, Eugenia
-
-- Ríos, Román
-
----
-
-Instituto de Formación Técnica Superior N° 29
-
-Tecnicatura Superior en Desarrollo de Software
-
-Año 2026
+**Comisión 3A · Grupo 1**
+- Daniel Ignacio Córdoba
+- Mariela Belén Giménez
+- Cecilia Daniela Gómez
+- Eugenia Lucchelli
+- Román Ríos
 
 ---
 
-## Descripción del proyecto
-
-MichiGestión es una aplicación web Full Stack desarrollada con el stack MERN para la gestión de adopción de gatos.
-
-La plataforma permite que los adoptantes visualicen gatos disponibles, envíen solicitudes de adopción y gestionen sus solicitudes, mientras que los administradores pueden administrar los animales publicados, revisar solicitudes y aprobar o rechazar procesos de adopción.
+MichiGestión permite administrar el catálogo de gatos disponibles para adopción, gestionar solicitudes de adoptantes y automatizar el flujo de aprobación mediante reglas de negocio integradas.
 
 ---
 
-# Tecnologías utilizadas
 
-## Frontend
+## Características principales
 
-* React
-* React Router DOM
-* Context API
-* Axios
-* Vite
-* CSS Modules / CSS tradicional
-* Lucide React
+### Para adoptantes
 
-## Backend
+- Iniciar sesión mediante Google.
+- Visualizar gatos disponibles.
+- Consultar información detallada de cada gato.
+- Enviar solicitudes de adopción.
+- Editar o cancelar solicitudes pendientes.
+- Gestionar información de perfil.
 
-* Node.js
-* Express
-* MongoDB
-* Mongoose
-* JSON Web Tokens (JWT)
-* Google OAuth
-* Multer
-* Cloudinary
+### Para administradores
 
-## Infraestructura
-
-* MongoDB Atlas
-* Render (Backend)
-* Vercel (Frontend)
-* Cloudinary (almacenamiento de imágenes)
+- Crear, editar y eliminar registros de gatos.
+- Publicar o despublicar gatos.
+- Gestionar estados de adopción.
+- Revisar todas las solicitudes recibidas.
+- Aprobar o rechazar solicitudes.
+- Buscar, filtrar y ordenar información desde los paneles administrativos.
 
 ---
 
-# Funcionalidades implementadas
-
-## Autenticación
-
-### Inicio de sesión con Google
-
-La autenticación se realiza mediante Google OAuth.
-
-Al iniciar sesión:
-
-* Se valida el token recibido desde Google.
-* Se crea automáticamente el usuario si no existe.
-* Se actualizan los datos básicos del perfil.
-* Se genera un JWT para autenticar futuras solicitudes.
-
-### Autorización basada en roles
-
-Existen dos tipos de usuarios:
-
-#### Adoptante
-
-Puede:
-
-* Ver gatos publicados.
-* Consultar detalles de los gatos.
-* Enviar solicitudes de adopción.
-* Editar solicitudes pendientes.
-* Cancelar solicitudes pendientes.
-* Gestionar su perfil.
-
-#### Administrador
-
-Puede:
-
-* Crear gatos.
-* Editar gatos.
-* Eliminar gatos.
-* Gestionar estados de adopción.
-* Ver todas las solicitudes.
-* Aprobar o rechazar solicitudes.
-* Consultar usuarios registrados.
-
----
-
-# Gestión de gatos
-
-Los gatos poseen la siguiente información:
-
-* Nombre
-* Edad aproximada
-* Sexo
-* Descripción
-* Fotografía
-* Estado de adopción
-
-Estados disponibles:
-
-```text
-No publicado
-Publicado
-Con solicitudes
-Adoptado
-```
-
-### Funcionalidades
-
-* Alta de gatos.
-* Modificación de datos.
-* Eliminación de registros.
-* Subida de imágenes.
-* Paginación de resultados.
-* Control de visibilidad según rol.
-
----
-
-# Gestión de solicitudes de adopción
-
-Los usuarios autenticados pueden enviar solicitudes para adoptar un gato.
-
-Cada solicitud almacena:
-
-* Usuario solicitante
-* Gato seleccionado
-* Motivo de adopción
-* Teléfono de contacto
-* Estado de la solicitud
-
-Estados disponibles:
-
-```text
-Pendiente
-Aprobada
-Rechazada
-```
-
-### Reglas de negocio implementadas
-
-* No se pueden enviar solicitudes para gatos adoptados.
-* Un usuario no puede enviar más de una solicitud para el mismo gato.
-* Solo las solicitudes pendientes pueden editarse.
-* Solo las solicitudes pendientes pueden cancelarse.
-* Los administradores pueden aprobar o rechazar solicitudes.
-
----
-
-# Automatización del proceso de adopción
-
-Cuando una solicitud es aprobada:
-
-1. El gato pasa automáticamente al estado `Adoptado`.
-2. Todas las demás solicitudes asociadas al mismo gato son rechazadas automáticamente.
-3. Los cambios se ejecutan dentro de una transacción de MongoDB para garantizar consistencia de datos.
-
----
-
-# Gestión de imágenes
-
-Las fotografías de los gatos se almacenan en Cloudinary.
-
-Características:
-
-* Validación de tipo de archivo.
-* Límite de tamaño configurado mediante Multer.
-* Carga en memoria y envío directo a Cloudinary.
-* Almacenamiento de la URL resultante en MongoDB.
-
----
-
-# Seguridad
-
-## JWT
-
-Las rutas privadas requieren un token JWT válido.
-
-El middleware de autenticación:
-
-* Verifica la firma del token.
-* Recupera el usuario asociado.
-* Inyecta los datos del usuario en la request.
-
-## Middleware de autorización
-
-Las operaciones administrativas están protegidas mediante un middleware que verifica el rol del usuario.
-
----
-
-# Validaciones
-
-La aplicación implementa validaciones tanto en frontend como en backend.
-
-### Backend
-
-Mediante Mongoose:
-
-* Campos obligatorios.
-* Longitudes mínimas y máximas.
-* Enumeraciones.
-* Restricciones de formato.
+## Tecnologías utilizadas
 
 ### Frontend
 
-* Límites de caracteres.
-* Validaciones previas al envío.
-* Mensajes de error amigables para el usuario.
+- React
+- React Router
+- Context API
+- Axios
+- Vite
+- Lucide React
+
+### Backend
+
+- Node.js
+- Express
+- MongoDB
+- Mongoose
+- JWT
+- Google OAuth
+- Multer
+- Cloudinary
+
+### Infraestructura
+
+- MongoDB Atlas
+- Render
+- Vercel
+- Cloudinary
 
 ---
 
-# Experiencia de usuario
+## Reglas de negocio
 
-Se implementaron componentes de carga para mejorar la percepción de rendimiento:
+### Gestión de solicitudes
 
-* Skeleton Cards
-* Skeleton Details
-* Skeleton Forms
-* Loading Spinners
+- Un usuario puede enviar una única solicitud por gato.
+- No se permiten solicitudes para gatos ya adoptados.
+- Solo las solicitudes pendientes pueden modificarse o cancelarse.
+- Los administradores pueden aprobar o rechazar solicitudes.
 
-Además:
+### Automatización del proceso de adopción
 
-* Confirmaciones antes de operaciones destructivas.
-* Feedback visual de éxito y error.
-* Navegación protegida mediante rutas privadas.
+Cuando una solicitud es aprobada:
+
+- El gato pasa automáticamente a estado **Adoptado**.
+- Todas las demás solicitudes asociadas son rechazadas.
+- La operación se ejecuta mediante transacciones de MongoDB para garantizar consistencia.
+
+Cuando una solicitud pendiente es cancelada, rechazada o eliminada:
+
+- El sistema recalcula automáticamente el estado del gato.
+- Si no quedan solicitudes pendientes, vuelve a estado **Publicado**.
+- Si aún existen solicitudes, permanece en estado **Con solicitudes**.
 
 ---
 
-# Estructura del proyecto
+## Instalación local
+
+### 1. Clonar el repositorio
+
+```bash
+git clone https://github.com/romanrios/IFTS-PP4-PI-grupo1.git
+cd IFTS-PP4-PI-grupo1
+```
+
+### 2. Configurar variables de entorno
+
+#### Backend
+
+```env
+MONGO_URI=
+PORT=
+GOOGLE_CLIENT_ID=
+JWT_SECRET=
+CLOUDINARY_CLOUD_NAME=
+CLOUDINARY_API_KEY=
+CLOUDINARY_API_SECRET=
+```
+
+#### Frontend
+
+```env
+VITE_API_URL=
+VITE_GOOGLE_CLIENT_ID=
+```
+
+### 3. Ejecutar el backend
+
+```bash
+cd backend
+npm install
+npm run dev
+```
+
+### 4. Ejecutar el frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+---
+
+## Estructura del proyecto
 
 ```text
 backend/
@@ -273,83 +171,36 @@ frontend/
 
 ---
 
-# Variables de entorno
+## Seguridad
 
-## Backend
+### Autenticación
 
-```env
-MONGO_URI=
-PORT=
-GOOGLE_CLIENT_ID=
-JWT_SECRET=
-CLOUDINARY_CLOUD_NAME=
-CLOUDINARY_API_KEY=
-CLOUDINARY_API_SECRET=
-```
+- Inicio de sesión mediante Google OAuth.
+- Generación de JWT para sesiones autenticadas.
+- Protección de rutas privadas mediante middleware.
 
-## Frontend
+### Autorización
 
-```env
-VITE_API_URL=
-VITE_GOOGLE_CLIENT_ID=
-```
+- Control de acceso basado en roles.
+- Operaciones administrativas restringidas a usuarios autorizados.
 
 ---
 
-# Instalación local
+## Experiencia de usuario
 
-## Clonar repositorio
-
-```bash
-git clone https://github.com/romanrios/IFTS-PP4-PI-grupo1/
-cd ifts-pp4-pi-grupo1
-```
-
-## Backend
-
-```bash
-cd backend
-npm install
-npm run dev
-```
-
-## Frontend
-
-En otra terminal:
-
-```bash
-cd frontend
-npm install
-npm run dev
-```
+- Skeleton loaders para listas, formularios y detalles.
+- Indicadores de carga.
+- Confirmaciones para acciones destructivas.
+- Mensajes de éxito y error.
+- Navegación protegida.
+- Scroll automático entre páginas.
 
 ---
 
-# Arquitectura
+**Tecnicatura Superior en Desarrollo de Software**
 
-El backend sigue una arquitectura basada en capas:
+Instituto de Formación Técnica Superior N.º 29  
 
-* Routes
-* Controllers
-* Models
-* Middleware
-* Config
+Práctica Profesionalizante 4 · Proyecto Integrador
 
-La persistencia se gestiona mediante MongoDB y Mongoose, mientras que React se encarga de la interfaz de usuario consumiendo una API REST desarrollada con Express.
-
----
-
-# Objetivos académicos
-
-Este proyecto fue desarrollado con el objetivo de aplicar conceptos de:
-
-* Desarrollo Full Stack
-* APIs REST
-* Autenticación y autorización
-* Persistencia de datos con MongoDB
-* Modelado de entidades y relaciones
-* Gestión de estados de negocio
-* Integración de servicios externos
-* Seguridad básica en aplicaciones web
-* Arquitectura cliente-servidor
-
+Año 2026

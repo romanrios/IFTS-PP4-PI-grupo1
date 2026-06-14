@@ -5,6 +5,23 @@ import { uploadImage } from "../config/cloudinary.js";
 const getVisibilityFilter = (user) =>
   user?.isAdmin ? {} : { estadoAdopcion: { $ne: "No publicado" } };
 
+const accentInsensitiveRegex = (text) => {
+  const accentMap = {
+    a: "[aáàäâã]",
+    e: "[eéèëê]",
+    i: "[iíìïî]",
+    o: "[oóòöôõ]",
+    u: "[uúùüû]",
+    n: "[nñ]",
+  };
+
+  return text
+    .toLowerCase()
+    .split("")
+    .map((char) => accentMap[char] || char)
+    .join("");
+};
+
 // @desc    Obtener todos los gatos (Para que los adoptantes vean la lista)
 // @route   GET /api/gatos
 export const getGatos = async (req, res) => {
@@ -13,10 +30,27 @@ export const getGatos = async (req, res) => {
     const limit = Math.max(1, parseInt(req.query.limit, 10) || 10);
     const skip = (page - 1) * limit;
     const visibilityFilter = getVisibilityFilter(req.user);
+    
+    // Parámetros de búsqueda y filtrado
+    const nombre = req.query.nombre ? req.query.nombre.trim() : "";
+    const estadoAdopcion = req.query.estadoAdopcion ? req.query.estadoAdopcion.trim() : "";
+    const sortOrder = parseInt(req.query.sort, 10) || -1; // -1 = más recientes, 1 = más antiguos
+
+    // Construir filtros
+    const matchStage = { $match: visibilityFilter };
+    
+    if (nombre) {
+      const accentInsensitiveNombre = accentInsensitiveRegex(nombre);
+      matchStage.$match.nombre = { $regex: accentInsensitiveNombre, $options: "i" };
+    }
+    
+    if (estadoAdopcion) {
+      matchStage.$match.estadoAdopcion = estadoAdopcion;
+    }
 
     const [gatos, totalItems] = await Promise.all([
       Gato.aggregate([
-        { $match: visibilityFilter },
+        matchStage,
         {
           $addFields: {
             _adoptedLast: {
@@ -24,12 +58,12 @@ export const getGatos = async (req, res) => {
             },
           },
         },
-        { $sort: { _adoptedLast: 1, createdAt: -1 } },
+        { $sort: { _adoptedLast: 1, createdAt: sortOrder } },
         { $skip: skip },
         { $limit: limit },
         { $project: { _adoptedLast: 0 } },
       ]),
-      Gato.countDocuments(visibilityFilter),
+      Gato.countDocuments(matchStage.$match),
     ]);
 
     const totalPages = Math.ceil(totalItems / limit) || 1;

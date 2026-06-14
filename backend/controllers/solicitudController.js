@@ -2,6 +2,33 @@ import mongoose from "mongoose";
 import Gato from "../models/Gato.js";
 import Solicitud from "../models/Solicitud.js";
 
+const normalizeText = (text) => {
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+};
+
+const actualizarEstadoGato = async (gatoId) => {
+  if (!mongoose.Types.ObjectId.isValid(gatoId)) {
+    return;
+  }
+
+  const gatoDB = await Gato.findById(gatoId);
+  if (!gatoDB || gatoDB.estadoAdopcion === "Adoptado") {
+    return;
+  }
+
+  const solicitudesPendientes = await Solicitud.countDocuments({
+    gato: gatoId,
+    estadoSolicitud: "Pendiente",
+  });
+
+  await Gato.findByIdAndUpdate(gatoId, {
+    estadoAdopcion: solicitudesPendientes > 0 ? "Con solicitudes" : "Publicado",
+  });
+};
+
 // @desc    Crear una nueva solicitud de adopción (Cuando el usuario aprieta "Adoptar")
 // @route   POST /api/solicitudes
 export const createSolicitud = async (req, res) => {
@@ -99,12 +126,16 @@ export const getMiSolicitudByGato = async (req, res) => {
     });
 
     if (!solicitud) {
-      return res.status(404).json({
-        message: "No tenés una solicitud para este michi",
+      return res.status(200).json({
+        existe: false,
+        solicitud: null,
       });
     }
 
-    res.status(200).json(solicitud);
+    res.status(200).json({
+      existe: true,
+      solicitud,
+    });
   } catch (error) {
     res.status(500).json({
       message: "Error al obtener la solicitud",
@@ -183,7 +214,9 @@ export const deleteMiSolicitud = async (req, res) => {
       });
     }
 
+    const gatoId = solicitud.gato;
     await solicitud.deleteOne();
+    await actualizarEstadoGato(gatoId);
 
     res.status(200).json({
       message: "Solicitud cancelada correctamente",
@@ -223,10 +256,34 @@ export const getSolicitudesByGato = async (req, res) => {
 // @route   GET /api/solicitudes
 export const getSolicitudes = async (req, res) => {
   try {
-    // El .populate trae los datos reales vinculados de las colecciones de usuarios y gatos
-    const solicitudes = await Solicitud.find()
-      .populate("usuario", "name email") // Trae solo nombre y mail del adoptante
-      .populate("gato", "nombre foto estadoAdopcion"); // Trae datos clave del michi
+    // Parámetros de filtrado
+    const estadoSolicitud = req.query.estadoSolicitud ? req.query.estadoSolicitud.trim() : "";
+    const search = req.query.search ? req.query.search.trim() : "";
+    const sortOrder = parseInt(req.query.sort, 10) || -1; // -1 = más recientes, 1 = más antiguos
+
+    // Construir filtro base
+    let matchFilter = {};
+    if (estadoSolicitud) {
+      matchFilter.estadoSolicitud = estadoSolicitud;
+    }
+
+    // Obtener solicitudes con filtros
+    let query = Solicitud.find(matchFilter)
+      .populate("usuario", "name email")
+      .populate("gato", "nombre foto estadoAdopcion")
+      .sort({ createdAt: sortOrder });
+
+    let solicitudes = await query;
+
+    // Filtrar por búsqueda de texto si se proporciona
+    if (search) {
+      const normalizedSearch = normalizeText(search);
+      solicitudes = solicitudes.filter((s) => {
+        const gatoNombre = normalizeText(s.gato?.nombre || "");
+        const usuarioNombre = normalizeText(s.usuario?.name || "");
+        return gatoNombre.includes(normalizedSearch) || usuarioNombre.includes(normalizedSearch);
+      });
+    }
 
     res.status(200).json(solicitudes);
   } catch (error) {
@@ -298,6 +355,10 @@ export const updateEstadoSolicitud = async (req, res) => {
     // 3. Confirmar todos los cambios
     await session.commitTransaction();
 
+    if (estadoSolicitud === "Rechazada") {
+      await actualizarEstadoGato(solicitudActualizada.gato);
+    }
+
     return res.status(200).json(solicitudActualizada);
   } catch (error) {
     await session.abortTransaction();
@@ -328,6 +389,8 @@ export const deleteSolicitud = async (req, res) => {
         message: "Solicitud no encontrada",
       });
     }
+
+    await actualizarEstadoGato(solicitud.gato);
 
     res.status(200).json({
       message: "Solicitud eliminada correctamente",

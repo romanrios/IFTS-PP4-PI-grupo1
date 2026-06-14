@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import Footer from "./components/Footer/Footer";
 import Header from "./components/Header/Header";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ScrollToTop from "./components/ScrollToTop";
 import { useAuth } from "./context/AuthContext";
 import AdminDashboard from "./pages/AdminMenuPage/AdminMenuPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
@@ -16,6 +17,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <ScrollToTop />
       {user && <Header />}
       <main>
         <Routes>

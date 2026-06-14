@@ -7,6 +7,13 @@ import Spinner from "../../components/Spinner/Spinner";
 import { confirmAlert, deleteConfirmAlert, errorAlert, successAlert } from "../../utils/alerts";
 import "./SolicitudesPage.css";
 
+const normalizeText = (text) => {
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+};
+
 function SolicitudesPage() {
   const [searchParams] = useSearchParams();
   const highlightedSolicitudId = searchParams.get("solicitud");
@@ -15,12 +22,21 @@ function SolicitudesPage() {
   const [solicitudes, setSolicitudes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
+  const [searchText, setSearchText] = useState("");
+  const [filterEstado, setFilterEstado] = useState("");
+  const [sortOrder, setSortOrder] = useState(-1);
 
   const getActionKey = (id, action) => `${id}-${action}`;
 
   const fetchSolicitudes = async () => {
     try {
-      const res = await api.get("/solicitudes");
+      const params = {
+        ...(searchText && { search: searchText }),
+        ...(filterEstado && { estadoSolicitud: filterEstado }),
+        ...(sortOrder !== -1 && { sort: sortOrder }),
+      };
+      
+      const res = await api.get("/solicitudes", { params });
       setSolicitudes(res.data);
     } catch (error) {
       console.error(error);
@@ -32,7 +48,7 @@ function SolicitudesPage() {
 
   useEffect(() => {
     fetchSolicitudes();
-  }, []);
+  }, [searchText, filterEstado, sortOrder]);
 
   useEffect(() => {
     if (!loading && highlightedSolicitudId) {
@@ -120,6 +136,34 @@ function SolicitudesPage() {
   return (
     <div className="solicitudes-page">
       <TitleBar title="Panel de Solicitudes" backTo="/admin" />
+
+      <div className="solicitudes-filters">
+        <input
+          type="text"
+          placeholder="Buscar por nombre de michi o adoptante..."
+          value={searchText}
+          onChange={(e) => setSearchText(e.target.value)}
+          className="solicitudes-filters__search"
+        />
+        <select
+          value={filterEstado}
+          onChange={(e) => setFilterEstado(e.target.value)}
+          className="solicitudes-filters__select"
+        >
+          <option value="">Todos los estados</option>
+          <option value="Pendiente">Pendiente</option>
+          <option value="Aprobada">Aprobada</option>
+          <option value="Rechazada">Rechazada</option>
+        </select>
+        <select
+          value={sortOrder}
+          onChange={(e) => setSortOrder(parseInt(e.target.value))}
+          className="solicitudes-filters__select"
+        >
+          <option value={-1}>Más recientes</option>
+          <option value={1}>Más antiguos</option>
+        </select>
+      </div>
 
       {loading ? (
         <div className="solicitudes-list">
