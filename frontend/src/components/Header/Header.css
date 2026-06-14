@@ -72,3 +72,24 @@
 
   transform: translateY(-1px);
 }
+
+@media (max-width: 390px) {
+    .header__logo-isotipo {
+        display: none;
+    }
+
+    .header__user{
+      gap: 0.5rem;
+    }
+}
+
+
+@media (max-width: 340px) {
+    .header__logo-texto {
+        display: none;
+    }
+
+    .header__logo-isotipo {
+        display:block;
+    }
+}
