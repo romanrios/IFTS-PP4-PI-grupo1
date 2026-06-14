@@ -55,6 +55,29 @@ export const createSolicitud = async (req, res) => {
   }
 };
 
+// @desc    Obtener solicitudes asociadas a un michi (Para el detalle del administrador)
+// @route   GET /api/solicitudes/gato/:gatoId
+export const getSolicitudesByGato = async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.gatoId)) {
+    return res.status(400).json({
+      message: "ID inválido",
+    });
+  }
+
+  try {
+    const solicitudes = await Solicitud.find({ gato: req.params.gatoId })
+      .populate("usuario", "name email")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(solicitudes);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error al obtener las solicitudes del michi",
+      error: error.message,
+    });
+  }
+};
+
 // @desc    Obtener todas las solicitudes (Para el panel del Administrador)
 // @route   GET /api/solicitudes
 export const getSolicitudes = async (req, res) => {
