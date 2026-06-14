@@ -26,9 +26,7 @@ Año 2026
 
 ## Descripción del proyecto
 
-MichiGestión es una aplicación web Full Stack desarrollada con el stack MERN para la gestión de adopción de gatos.
-
-La plataforma permite que los adoptantes visualicen gatos disponibles, envíen solicitudes de adopción y gestionen sus solicitudes, mientras que los administradores pueden administrar los animales publicados, revisar solicitudes y aprobar o rechazar procesos de adopción.
+MichiGestión es una aplicación MERN para gestión de adopción de gatos. Permite a adoptantes visualizar animales disponibles y enviar solicitudes de adopción, y a administradores gestionar catálogos, revisar solicitudes y automatizar procesos de aprobación.
 
 ---
 
@@ -68,16 +66,12 @@ La plataforma permite que los adoptantes visualicen gatos disponibles, envíen s
 
 ## Autenticación
 
-### Inicio de sesión con Google
+### Google OAuth
 
-La autenticación se realiza mediante Google OAuth.
-
-Al iniciar sesión:
-
-* Se valida el token recibido desde Google.
-* Se crea automáticamente el usuario si no existe.
-* Se actualizan los datos básicos del perfil.
-* Se genera un JWT para autenticar futuras solicitudes.
+* Validación de token desde Google
+* Creación automática de usuario si no existe
+* Actualización de datos del perfil
+* Generación de JWT para autenticación subsecuente
 
 ### Autorización basada en roles
 
@@ -85,110 +79,90 @@ Existen dos tipos de usuarios:
 
 #### Adoptante
 
-Puede:
-
-* Ver gatos publicados.
-* Consultar detalles de los gatos.
-* Enviar solicitudes de adopción.
-* Editar solicitudes pendientes.
-* Cancelar solicitudes pendientes.
-* Gestionar su perfil.
+* Ver gatos publicados
+* Consultar detalles de animales
+* Enviar solicitudes de adopción
+* Editar solicitudes pendientes
+* Cancelar solicitudes propias
+* Gestionar perfil
 
 #### Administrador
 
-Puede:
-
-* Crear gatos.
-* Editar gatos.
-* Eliminar gatos.
-* Gestionar estados de adopción.
-* Ver todas las solicitudes.
-* Aprobar o rechazar solicitudes.
-* Consultar usuarios registrados.
+* CRUD de gatos
+* Gestionar estados de adopción
+* Ver y gestionar todas las solicitudes
+* Acceso a herramientas avanzadas: búsqueda, filtrado y ordenamiento en Paneles
 
 ---
 
 # Gestión de gatos
 
-Los gatos poseen la siguiente información:
+## Atributos
 
-* Nombre
-* Edad aproximada
-* Sexo
-* Descripción
-* Fotografía
-* Estado de adopción
+* Nombre, edad aproximada, sexo, descripción, fotografía
+* Estados: No publicado | Publicado | Con solicitudes | Adoptado
 
-Estados disponibles:
+## Funcionalidades
 
-```text
-No publicado
-Publicado
-Con solicitudes
-Adoptado
-```
-
-### Funcionalidades
-
-* Alta de gatos.
-* Modificación de datos.
-* Eliminación de registros.
-* Subida de imágenes.
-* Paginación de resultados.
-* Control de visibilidad según rol.
+* CRUD de registros
+* Subida de imágenes a Cloudinary
+* Paginación de resultados
+* Control de visibilidad por rol
+* Búsqueda por nombre (insensible a mayúsculas)
+* Filtrado por estado de adopción
+* Ordenamiento cronológico (recientes / antiguos)
 
 ---
 
 # Gestión de solicitudes de adopción
 
-Los usuarios autenticados pueden enviar solicitudes para adoptar un gato.
+## Atributos
 
-Cada solicitud almacena:
+* Usuario solicitante, gato seleccionado, motivo, teléfono de contacto
+* Estados: Pendiente | Aprobada | Rechazada
 
-* Usuario solicitante
-* Gato seleccionado
-* Motivo de adopción
-* Teléfono de contacto
-* Estado de la solicitud
+## Herramientas de administración
 
-Estados disponibles:
+* Búsqueda de texto cruzado: coincidencias en nombre de gato o adoptante
+* Filtrado por estado de solicitud
+* Ordenamiento por fecha (recientes / antiguos)
 
-```text
-Pendiente
-Aprobada
-Rechazada
-```
+## Reglas de negocio
 
-### Reglas de negocio implementadas
-
-* No se pueden enviar solicitudes para gatos adoptados.
-* Un usuario no puede enviar más de una solicitud para el mismo gato.
-* Solo las solicitudes pendientes pueden editarse.
-* Solo las solicitudes pendientes pueden cancelarse.
-* Los administradores pueden aprobar o rechazar solicitudes.
+* No solicitudes para gatos adoptados
+* Un usuario = máximo una solicitud por gato
+* Solo pendientes se editan o cancelan
+* Admin aprueba o rechaza solicitudes
 
 ---
 
 # Automatización del proceso de adopción
 
-Cuando una solicitud es aprobada:
+## Sincronización progresiva (aprobación)
 
-1. El gato pasa automáticamente al estado `Adoptado`.
-2. Todas las demás solicitudes asociadas al mismo gato son rechazadas automáticamente.
-3. Los cambios se ejecutan dentro de una transacción de MongoDB para garantizar consistencia de datos.
+Al aprobar solicitud:
+
+* Gato pasa a estado `Adoptado`
+* Todas las demás solicitudes del mismo gato se rechazan automáticamente
+* Cambios en transacción MongoDB para garantizar consistencia
+
+## Sincronización inversa (cancelación)
+
+Al cancelar/rechazar/eliminar solicitud pendiente:
+
+* Backend recalcula solicitudes pendientes del gato
+* Si contador = 0: gato revierte a `Publicado`
+* Si persisten pendientes: gato mantiene `Con solicitudes`
+* Lógica segura frente a condiciones de carrera
 
 ---
 
 # Gestión de imágenes
 
-Las fotografías de los gatos se almacenan en Cloudinary.
-
-Características:
-
-* Validación de tipo de archivo.
-* Límite de tamaño configurado mediante Multer.
-* Carga en memoria y envío directo a Cloudinary.
-* Almacenamiento de la URL resultante en MongoDB.
+* Almacenamiento en Cloudinary
+* Validación de tipo y tamaño mediante Multer
+* Carga en memoria con envío directo
+* URL almacenada en MongoDB
 
 ---
 
@@ -196,55 +170,41 @@ Características:
 
 ## JWT
 
-Las rutas privadas requieren un token JWT válido.
+* Verificación de firma en rutas privadas
+* Middleware: recupera usuario e inyecta datos en request
 
-El middleware de autenticación:
+## Autorización
 
-* Verifica la firma del token.
-* Recupera el usuario asociado.
-* Inyecta los datos del usuario en la request.
-
-## Middleware de autorización
-
-Las operaciones administrativas están protegidas mediante un middleware que verifica el rol del usuario.
+* Middleware de validación de rol para operaciones administrativas
 
 ---
 
 # Validaciones
 
-La aplicación implementa validaciones tanto en frontend como en backend.
+## Backend (Mongoose)
 
-### Backend
+* Campos obligatorios, longitudes mín/máx, enumeraciones, restricciones de formato
 
-Mediante Mongoose:
+## Frontend
 
-* Campos obligatorios.
-* Longitudes mínimas y máximas.
-* Enumeraciones.
-* Restricciones de formato.
-
-### Frontend
-
-* Límites de caracteres.
-* Validaciones previas al envío.
-* Mensajes de error amigables para el usuario.
+* Límites de caracteres, validaciones previas, mensajes amigables
 
 ---
 
 # Experiencia de usuario
 
-Se implementaron componentes de carga para mejorar la percepción de rendimiento:
+## Componentes de carga
 
-* Skeleton Cards
-* Skeleton Details
-* Skeleton Forms
+* Skeleton Cards, Details, Forms
 * Loading Spinners
 
-Además:
+## Mejoras UX
 
-* Confirmaciones antes de operaciones destructivas.
-* Feedback visual de éxito y error.
-* Navegación protegida mediante rutas privadas.
+* Confirmaciones antes de operaciones destructivas
+* Feedback visual de éxito/error
+* Scroll automático al cambiar página (ScrollToTop)
+* Respuestas HTTP 200 estructuradas en lugar de errores 404 innecesarios
+* Rutas privadas protegidas por autenticación
 
 ---
 
@@ -327,29 +287,27 @@ npm run dev
 
 # Arquitectura
 
-El backend sigue una arquitectura basada en capas:
+## Backend
 
-* Routes
-* Controllers
-* Models
-* Middleware
-* Config
+Arquitectura en capas: Routes → Controllers → Models + Middleware + Config
 
-La persistencia se gestiona mediante MongoDB y Mongoose, mientras que React se encarga de la interfaz de usuario consumiendo una API REST desarrollada con Express.
+## Stack
+
+* Persistencia: MongoDB + Mongoose
+* API REST: Express
+* Frontend: React consumiendo API
 
 ---
 
 # Objetivos académicos
 
-Este proyecto fue desarrollado con el objetivo de aplicar conceptos de:
-
-* Desarrollo Full Stack
+* Full Stack development
 * APIs REST
-* Autenticación y autorización
-* Persistencia de datos con MongoDB
+* Autenticación / autorización basada en roles
+* Persistencia MongoDB
 * Modelado de entidades y relaciones
 * Gestión de estados de negocio
-* Integración de servicios externos
-* Seguridad básica en aplicaciones web
+* Integración de servicios externos (Google OAuth, Cloudinary)
+* Seguridad en aplicaciones web
 * Arquitectura cliente-servidor
 
