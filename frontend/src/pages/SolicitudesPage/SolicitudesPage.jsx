@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import api from "../../api";
 import TitleBar from "../../components/TitleBar/TitleBar";
 import SolicitudCardSkeleton from "../../components/SolicitudCardSkeleton/SolicitudCardSkeleton";
@@ -7,6 +8,10 @@ import { confirmAlert, deleteConfirmAlert, errorAlert, successAlert } from "../.
 import "./SolicitudesPage.css";
 
 function SolicitudesPage() {
+  const [searchParams] = useSearchParams();
+  const highlightedSolicitudId = searchParams.get("solicitud");
+  const highlightedGatoId = searchParams.get("gato");
+
   const [solicitudes, setSolicitudes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(null);
@@ -28,6 +33,16 @@ function SolicitudesPage() {
   useEffect(() => {
     fetchSolicitudes();
   }, []);
+
+  useEffect(() => {
+    if (!loading && highlightedSolicitudId) {
+      const element = document.getElementById(`solicitud-${highlightedSolicitudId}`);
+
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }
+  }, [loading, highlightedSolicitudId, solicitudes]);
 
   const actualizarEstado = async (solicitud, estadoSolicitud) => {
     const acciones = {
@@ -116,8 +131,18 @@ function SolicitudesPage() {
         <p>No hay solicitudes registradas.</p>
       ) : (
         <div className="solicitudes-list">
-          {solicitudes.map((s) => (
-            <article key={s._id} className="solicitud-card">
+          {solicitudes.map((s) => {
+            const gatoId = s.gato?._id ?? s.gato;
+            const isHighlighted =
+              s._id === highlightedSolicitudId ||
+              (highlightedGatoId && gatoId === highlightedGatoId);
+
+            return (
+            <article
+              key={s._id}
+              id={`solicitud-${s._id}`}
+              className={`solicitud-card ${isHighlighted ? "solicitud-card--highlighted" : ""}`}
+            >
               <div className="solicitud-card__header">
                 <img src={s.gato?.foto} alt={s.gato?.nombre} />
 
@@ -206,7 +231,8 @@ function SolicitudesPage() {
                 </button>
               </div>
             </article>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

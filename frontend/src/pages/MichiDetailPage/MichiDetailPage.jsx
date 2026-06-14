@@ -162,20 +162,25 @@ function MichiDetailPage() {
               ) : (
                 <ul className="michi-detail__solicitudes-list">
                   {solicitudes.map((solicitud) => (
-                    <li key={solicitud._id} className="michi-detail__solicitud-item">
-                      <div className="michi-detail__solicitud-main">
-                        <strong>{solicitud.usuario?.name ?? "Usuario sin nombre"}</strong>
-                        <span
-                          className={`michi-detail__solicitud-estado michi-detail__solicitud-estado--${solicitud.estadoSolicitud.toLowerCase()}`}
-                        >
-                          {solicitud.estadoSolicitud}
-                        </span>
-                      </div>
-                      {solicitud.createdAt && (
-                        <span className="michi-detail__solicitud-fecha">
-                          {formatFecha(solicitud.createdAt)}
-                        </span>
-                      )}
+                    <li key={solicitud._id}>
+                      <Link
+                        to={`/solicitudes?solicitud=${solicitud._id}`}
+                        className="michi-detail__solicitud-item"
+                      >
+                        <div className="michi-detail__solicitud-main">
+                          <strong>{solicitud.usuario?.name ?? "Usuario sin nombre"}</strong>
+                          <span
+                            className={`michi-detail__solicitud-estado michi-detail__solicitud-estado--${solicitud.estadoSolicitud.toLowerCase()}`}
+                          >
+                            {solicitud.estadoSolicitud}
+                          </span>
+                        </div>
+                        {solicitud.createdAt && (
+                          <span className="michi-detail__solicitud-fecha">
+                            {formatFecha(solicitud.createdAt)}
+                          </span>
+                        )}
+                      </Link>
                     </li>
                   ))}
                 </ul>

@@ -39,6 +39,11 @@
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
 }
 
+.solicitud-card--highlighted {
+  border: 2px solid var(--color-primary);
+  box-shadow: 0 8px 18px rgba(255, 109, 64, 0.25);
+}
+
 .solicitud-card__header {
   display: flex;
   align-items: center;
