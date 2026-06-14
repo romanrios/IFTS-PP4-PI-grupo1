@@ -138,11 +138,11 @@ function SolicitudesPage() {
               </div>
 
               <div className="solicitud-card__body">
-                <p>
-                  <strong>Teléfono:</strong> {s.telefonoContacto}
-                </p>
+                <div className="solicitud-card__meta">
+                  <p>
+                    <strong>Teléfono:</strong> {s.telefonoContacto}
+                  </p>
 
-                <div className="solicitud-card__estado">
                   <span
                     className={`estado-badge estado-${s.estadoSolicitud.toLowerCase()}`}
                   >

@@ -55,6 +55,159 @@ export const createSolicitud = async (req, res) => {
   }
 };
 
+// @desc    Obtener las solicitudes del usuario autenticado
+// @route   GET /api/solicitudes/mis
+export const getMisSolicitudes = async (req, res) => {
+  try {
+    const solicitudes = await Solicitud.find({ usuario: req.user._id })
+      .populate("gato", "nombre foto estadoAdopcion")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(solicitudes);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error al obtener tus solicitudes",
+      error: error.message,
+    });
+  }
+};
+
+// @desc    Obtener la solicitud del usuario autenticado para un michi
+// @route   GET /api/solicitudes/michi/:gatoId
+export const getMiSolicitudByGato = async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.gatoId)) {
+    return res.status(400).json({
+      message: "ID inválido",
+    });
+  }
+
+  try {
+    const solicitud = await Solicitud.findOne({
+      usuario: req.user._id,
+      gato: req.params.gatoId,
+    });
+
+    if (!solicitud) {
+      return res.status(404).json({
+        message: "No tenés una solicitud para este michi",
+      });
+    }
+
+    res.status(200).json(solicitud);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error al obtener la solicitud",
+      error: error.message,
+    });
+  }
+};
+
+// @desc    Actualizar una solicitud pendiente del usuario autenticado
+// @route   PUT /api/solicitudes/:id/mi
+export const updateMiSolicitud = async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({
+      message: "ID inválido",
+    });
+  }
+
+  const { motivo, telefonoContacto } = req.body;
+
+  try {
+    const solicitud = await Solicitud.findOne({
+      _id: req.params.id,
+      usuario: req.user._id,
+    });
+
+    if (!solicitud) {
+      return res.status(404).json({
+        message: "Solicitud no encontrada",
+      });
+    }
+
+    if (solicitud.estadoSolicitud !== "Pendiente") {
+      return res.status(400).json({
+        message: "Solo podés editar solicitudes pendientes",
+      });
+    }
+
+    solicitud.motivo = motivo;
+    solicitud.telefonoContacto = telefonoContacto;
+
+    const solicitudActualizada = await solicitud.save();
+
+    res.status(200).json(solicitudActualizada);
+  } catch (error) {
+    res.status(400).json({
+      message: "Error al actualizar la solicitud",
+      error: error.message,
+    });
+  }
+};
+
+// @desc    Eliminar una solicitud pendiente del usuario autenticado
+// @route   DELETE /api/solicitudes/:id/mi
+export const deleteMiSolicitud = async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+    return res.status(400).json({
+      message: "ID inválido",
+    });
+  }
+
+  try {
+    const solicitud = await Solicitud.findOne({
+      _id: req.params.id,
+      usuario: req.user._id,
+    });
+
+    if (!solicitud) {
+      return res.status(404).json({
+        message: "Solicitud no encontrada",
+      });
+    }
+
+    if (solicitud.estadoSolicitud !== "Pendiente") {
+      return res.status(400).json({
+        message: "Solo podés cancelar solicitudes pendientes",
+      });
+    }
+
+    await solicitud.deleteOne();
+
+    res.status(200).json({
+      message: "Solicitud cancelada correctamente",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Error al cancelar la solicitud",
+      error: error.message,
+    });
+  }
+};
+
+// @desc    Obtener solicitudes asociadas a un michi (Para el detalle del administrador)
+// @route   GET /api/solicitudes/gato/:gatoId
+export const getSolicitudesByGato = async (req, res) => {
+  if (!mongoose.Types.ObjectId.isValid(req.params.gatoId)) {
+    return res.status(400).json({
+      message: "ID inválido",
+    });
+  }
+
+  try {
+    const solicitudes = await Solicitud.find({ gato: req.params.gatoId })
+      .populate("usuario", "name email")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json(solicitudes);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error al obtener las solicitudes del michi",
+      error: error.message,
+    });
+  }
+};
+
 // @desc    Obtener todas las solicitudes (Para el panel del Administrador)
 // @route   GET /api/solicitudes
 export const getSolicitudes = async (req, res) => {

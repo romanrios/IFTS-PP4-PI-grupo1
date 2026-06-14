@@ -1,0 +1,112 @@
+.michi-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.michi-info__image {
+  width: 100%;
+  height: 380px;
+  object-fit: cover;
+  border-radius: 16px;
+}
+
+.michi-info__header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.michi-info__header h1 {
+  color: var(--color-secondary);
+  font-size: 2.2rem;
+  font-weight: 900;
+}
+
+.michi-info__estado {
+  display: inline-block;
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.michi-info__estado--publicado {
+  background: rgba(72, 207, 196, 0.2);
+  color: #1f8f86;
+}
+
+.michi-info__estado--con-solicitudes {
+  background: rgba(255, 193, 7, 0.2);
+  color: #9a6b00;
+}
+
+.michi-info__estado--adoptado {
+  background: rgba(40, 167, 69, 0.15);
+  color: #198754;
+}
+
+.michi-info__estado--no-publicado {
+  background: rgba(108, 117, 125, 0.15);
+  color: var(--color-gray-700);
+}
+
+.michi-info__meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.michi-info__meta-item {
+  background: var(--color-gray-100);
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.michi-info__meta-item span {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.michi-info__meta-item strong {
+  color: var(--color-secondary);
+  font-size: 1.05rem;
+}
+
+.michi-info__description {
+  background: var(--color-gray-100);
+  border-left: 4px solid var(--color-primary);
+  border-radius: 8px;
+  padding: 1.25rem;
+}
+
+.michi-info__description h2 {
+  color: var(--color-secondary);
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+}
+
+.michi-info__description p {
+  color: var(--color-text-muted);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+@media (max-width: 600px) {
+  .michi-info__image {
+    height: 260px;
+  }
+
+  .michi-info__header h1 {
+    font-size: 1.8rem;
+  }
+}

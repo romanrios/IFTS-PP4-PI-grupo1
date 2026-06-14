@@ -2,27 +2,11 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import api from "../../api";
 import MichiDetailSkeleton from "../../components/MichiDetailSkeleton/MichiDetailSkeleton";
+import MichiInfo, { formatFecha } from "../../components/MichiInfo/MichiInfo";
 import TitleBar from "../../components/TitleBar/TitleBar";
 import { useAuth } from "../../context/AuthContext";
 import { errorAlert } from "../../utils/alerts";
 import "./MichiDetailPage.css";
-
-// const DEFAULT_TITLE = "MichiGestión";
-
-const getEstadoClass = (estado) =>
-  `michi-detail__estado--${estado.toLowerCase().replace(/\s+/g, "-")}`;
-
-const formatSexo = (sexo) => (sexo === "M" ? "Macho ♂" : "Hembra ♀");
-
-const formatFecha = (fecha) => {
-  if (!fecha) return "No disponible";
-
-  return new Date(fecha).toLocaleDateString("es-AR", {
-    day: "2-digit",
-    month: "long",
-    year: "numeric",
-  });
-};
 
 function MichiDetailPage() {
   const { id } = useParams();
@@ -30,22 +14,20 @@ function MichiDetailPage() {
   const { user } = useAuth();
 
   const [michi, setMichi] = useState(null);
+  const [solicitudes, setSolicitudes] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadingSolicitudes, setLoadingSolicitudes] = useState(false);
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     fetchMichi();
   }, [id]);
 
-  // useEffect(() => {
-  //   if (michi?.nombre) {
-  //     document.title = `${michi.nombre} | Adopta un Michi`;
-  //   }
-
-  //   return () => {
-  //     document.title = DEFAULT_TITLE;
-  //   };
-  // }, [michi?.nombre]);
+  useEffect(() => {
+    if (user?.isAdmin && michi) {
+      fetchSolicitudes();
+    }
+  }, [user?.isAdmin, michi]);
 
   const fetchMichi = async () => {
     setLoading(true);
@@ -65,6 +47,20 @@ function MichiDetailPage() {
       }
     } finally {
       setLoading(false);
+    }
+  };
+
+  const fetchSolicitudes = async () => {
+    setLoadingSolicitudes(true);
+
+    try {
+      const res = await api.get(`/solicitudes/gato/${id}`);
+      setSolicitudes(res.data);
+    } catch (error) {
+      console.error(error);
+      errorAlert("Error", error);
+    } finally {
+      setLoadingSolicitudes(false);
     }
   };
 
@@ -151,47 +147,41 @@ function MichiDetailPage() {
         </div>
       ) : michi ? (
         <article className="michi-detail">
-          <img
-            src={michi.foto}
-            alt={michi.nombre}
-            className="michi-detail__image"
-          />
+          <MichiInfo michi={michi} />
 
-          <div className="michi-detail__header">
-            <h1>{michi.nombre}</h1>
-            <span
-              className={`michi-detail__estado ${getEstadoClass(michi.estadoAdopcion)}`}
-            >
-              {michi.estadoAdopcion}
-            </span>
-          </div>
+          {user?.isAdmin && (
+            <section className="michi-detail__solicitudes">
+              <h2>Solicitudes de adopción</h2>
 
-          <div className="michi-detail__info">
-            <div className="michi-detail__info-item">
-              <span>Edad</span>
-              <strong>{michi.edadAprox}</strong>
-            </div>
-
-            <div className="michi-detail__info-item">
-              <span>Sexo</span>
-              <strong>{formatSexo(michi.sexo)}</strong>
-            </div>
-
-            <div className="michi-detail__info-item">
-              <span>Estado</span>
-              <strong>{michi.estadoAdopcion}</strong>
-            </div>
-
-            <div className="michi-detail__info-item">
-              <span>Fecha de publicación</span>
-              <strong>{formatFecha(michi.createdAt)}</strong>
-            </div>
-          </div>
-
-          <section className="michi-detail__description">
-            <h2>Descripción</h2>
-            <p>{michi.descripcion}</p>
-          </section>
+              {loadingSolicitudes ? (
+                <p className="michi-detail__solicitudes-empty">Cargando solicitudes...</p>
+              ) : solicitudes.length === 0 ? (
+                <p className="michi-detail__solicitudes-empty">
+                  Este michi aún no tiene solicitudes.
+                </p>
+              ) : (
+                <ul className="michi-detail__solicitudes-list">
+                  {solicitudes.map((solicitud) => (
+                    <li key={solicitud._id} className="michi-detail__solicitud-item">
+                      <div className="michi-detail__solicitud-main">
+                        <strong>{solicitud.usuario?.name ?? "Usuario sin nombre"}</strong>
+                        <span
+                          className={`michi-detail__solicitud-estado michi-detail__solicitud-estado--${solicitud.estadoSolicitud.toLowerCase()}`}
+                        >
+                          {solicitud.estadoSolicitud}
+                        </span>
+                      </div>
+                      {solicitud.createdAt && (
+                        <span className="michi-detail__solicitud-fecha">
+                          {formatFecha(solicitud.createdAt)}
+                        </span>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </section>
+          )}
 
           <div className="michi-detail__actions">{renderAction()}</div>
         </article>

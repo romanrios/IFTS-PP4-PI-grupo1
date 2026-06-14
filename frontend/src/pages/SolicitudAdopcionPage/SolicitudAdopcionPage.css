@@ -4,7 +4,7 @@
   padding: 0 1rem 2rem;
 }
 
-.solicitud-card {
+.adopcion-card {
   max-width: 700px;
   margin: auto;
 
@@ -15,26 +15,35 @@
   padding: 2rem;
 
   box-shadow: 0 4px 12px rgba(0,0,0,.15);
+
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
-.solicitud-card img {
-  width: 100%;
-  height: 300px;
-  object-fit: cover;
-
-  border-radius: 12px;
-
-  margin-bottom: 1rem;
-}
-
-.solicitud-card form {
+.adopcion-card__form-section {
+  border-top: 1px solid var(--color-border);
+  padding-top: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-.solicitud-card textarea,
-.solicitud-card input {
+.adopcion-card__form-section h2 {
+  color: var(--color-secondary);
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.adopcion-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.adopcion-card textarea,
+.adopcion-card input {
   border: 1px solid var(--color-border);
 
   border-radius: 10px;
@@ -42,7 +51,7 @@
   padding: .9rem;
 }
 
-.solicitud-card button {
+.adopcion-card button {
   background: var(--color-primary);
 
   color: white;
@@ -58,7 +67,20 @@
   justify-content: center;
 }
 
-.solicitud-card__textarea-field {
+.adopcion-card__btn-cancelar {
+  background: var(--color-danger) !important;
+}
+
+.adopcion-card__btn-cancelar:hover:not(:disabled) {
+  background: var(--color-danger-dark) !important;
+}
+
+.adopcion-card__btn-cancelar:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.adopcion-card__textarea-field {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
@@ -76,4 +98,53 @@
   font-size: 0.85rem;
   color: var(--color-text-muted);
   font-weight: 600;
+}
+
+.adopcion-card__estado {
+  padding: 1rem;
+  border-radius: 12px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.adopcion-card__estado--aprobada {
+  background: rgba(40, 167, 69, 0.15);
+  color: #198754;
+}
+
+.adopcion-card__estado--rechazada {
+  background: rgba(220, 53, 69, 0.15);
+  color: var(--color-danger);
+}
+
+.adopcion-card__readonly {
+  border-top: 1px solid var(--color-border);
+  padding-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.adopcion-card__readonly h2 {
+  color: var(--color-secondary);
+  font-size: 1.2rem;
+  font-weight: 800;
+  margin: 0;
+}
+
+.adopcion-card__readonly-item span {
+  display: block;
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: 0.35rem;
+}
+
+.adopcion-card__readonly-item p {
+  margin: 0;
+  color: var(--color-secondary);
+  line-height: 1.6;
+  white-space: pre-wrap;
 }
