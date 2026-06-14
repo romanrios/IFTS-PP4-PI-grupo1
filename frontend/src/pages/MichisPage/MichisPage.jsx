@@ -1,3 +1,4 @@
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api";
@@ -7,7 +8,6 @@ import TitleBar from "../../components/TitleBar/TitleBar";
 import { useAuth } from "../../context/AuthContext";
 import { errorAlert } from "../../utils/alerts";
 import "./MichisPages.css";
-import { ChevronLeft, ChevronRight} from "lucide-react";
 
 const normalizeText = (text) => {
   return text
@@ -187,7 +187,7 @@ function MichisPage() {
                         }
                       : undefined
                   }
-                  miSolicitud={
+                  solicitud={
                     !user?.isAdmin ? misSolicitudesMap[michi._id] : undefined
                   }
                 />

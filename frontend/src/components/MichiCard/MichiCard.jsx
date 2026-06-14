@@ -2,12 +2,12 @@ import { Eye, Pencil, Trash } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api";
-import Spinner from "../Spinner/Spinner";
 import { useAuth } from "../../context/AuthContext";
-import { deleteConfirmAlert, errorAlert, successAlert, confirmAlert } from "../../utils/alerts";
+import { confirmAlert, deleteConfirmAlert, errorAlert, successAlert } from "../../utils/alerts";
+import Spinner from "../Spinner/Spinner";
 import "./MichiCard.css";
 
-function MichiCard({ michi, onDelete, onCancelSolicitud, solicitudResumen, miSolicitud }) {
+function MichiCard({ michi, onDelete, onCancelSolicitud, solicitudResumen, solicitud }) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [deleting, setDeleting] = useState(false);
@@ -18,16 +18,36 @@ function MichiCard({ michi, onDelete, onCancelSolicitud, solicitudResumen, miSol
 
   const isAdopted = michi.estadoAdopcion === "Adoptado";
 
-  const renderAdoptanteAction = () => {
-    if (isAdopted) {
+  const renderSolicitudBadge = () => {
+    if (!solicitud?.estadoSolicitud) return null;
+
+    if (solicitud.estadoSolicitud === "Aprobada") {
       return (
-        <span className="michi-card__adoptado" aria-disabled="true">
-          Adoptado
+        <span className="michi-card__solicitud-badge michi-card__solicitud-badge--adoptado-por-vos">
+          ¡Adoptado por vos!
         </span>
       );
     }
 
-    if (miSolicitud?.estadoSolicitud === "Pendiente") {
+    if (isAdopted && solicitud.estadoSolicitud === "Rechazada") {
+      return (
+        <span className="michi-card__solicitud-badge michi-card__solicitud-badge--rechazada">
+          No seleccionado
+        </span>
+      );
+    }
+
+    return (
+      <span
+        className={`michi-card__solicitud-badge michi-card__solicitud-badge--${solicitud.estadoSolicitud.toLowerCase()}`}
+      >
+        {solicitud.estadoSolicitud}
+      </span>
+    );
+  };
+
+  const renderAdoptanteAction = () => {
+    if (solicitud?.estadoSolicitud === "Pendiente") {
       return (
         <div className="michi-card__solicitud-actions">
           <button
@@ -50,7 +70,7 @@ function MichiCard({ michi, onDelete, onCancelSolicitud, solicitudResumen, miSol
       );
     }
 
-    if (miSolicitud?.estadoSolicitud === "Aprobada") {
+    if (solicitud?.estadoSolicitud === "Aprobada") {
       return (
         <span className="michi-card__solicitud-aprobada" aria-disabled="true">
           Solicitud aprobada
@@ -58,10 +78,21 @@ function MichiCard({ michi, onDelete, onCancelSolicitud, solicitudResumen, miSol
       );
     }
 
-    if (miSolicitud?.estadoSolicitud === "Rechazada") {
+    if (solicitud?.estadoSolicitud === "Rechazada") {
       return (
-        <span className="michi-card__solicitud-rechazada" aria-disabled="true">
-          Solicitud rechazada
+        <button
+          className="michi-card__btn-adoptar michi-card__btn-repostular"
+          onClick={() => navigate(`/adoptar/${michi._id}`)}
+        >
+          Enviar nueva solicitud
+        </button>
+      );
+    }
+
+    if (isAdopted) {
+      return (
+        <span className="michi-card__adoptado" aria-disabled="true">
+          Adoptado
         </span>
       );
     }
@@ -88,7 +119,7 @@ function MichiCard({ michi, onDelete, onCancelSolicitud, solicitudResumen, miSol
     setCanceling(true);
 
     try {
-      await api.delete(`/solicitudes/${miSolicitud._id}/mi`);
+      await api.delete(`/solicitudes/${solicitud._id}/mi`);
 
       await successAlert(
         "Solicitud cancelada",
@@ -137,7 +168,10 @@ function MichiCard({ michi, onDelete, onCancelSolicitud, solicitudResumen, miSol
 
       <div className="michi-card__content">
         <div className="michi-card__header">
-          <h3>{michi.nombre}</h3>
+          <div className="michi-card__title-group">
+            <h3>{michi.nombre}</h3>
+            {renderSolicitudBadge()}
+          </div>
           {user?.isAdmin && (
             <span
               className={`michi-card__estado ${getEstadoClass(michi.estadoAdopcion)}`}

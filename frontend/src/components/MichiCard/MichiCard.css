@@ -40,6 +40,13 @@
   margin-bottom: 0.25rem;
 }
 
+.michi-card__title-group {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .michi-card__estado {
   display: inline-block;
   padding: 0.3rem 0.75rem;
@@ -69,6 +76,42 @@
   color: var(--color-gray-700);
 }
 
+.michi-card__solicitud-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.michi-card__solicitud-badge--pendiente {
+  background-color: rgba(255, 193, 7, 0.16);
+  border-color: rgba(255, 193, 7, 0.28);
+  color: #9a6b00;
+}
+
+.michi-card__solicitud-badge--aprobada {
+  background-color: rgba(40, 167, 69, 0.16);
+  border-color: rgba(40, 167, 69, 0.28);
+  color: var(--color-success);
+}
+
+.michi-card__solicitud-badge--adoptado-por-vos {
+  background-color: rgba(40, 167, 69, 0.2);
+  border-color: rgba(40, 167, 69, 0.35);
+  color: var(--color-success);
+}
+
+.michi-card__solicitud-badge--rechazada {
+  background-color: rgba(220, 53, 69, 0.14);
+  border-color: rgba(220, 53, 69, 0.28);
+  color: var(--color-danger);
+}
+
 .michi-card__solicitudes {
   display: flex;
   flex-wrap: wrap;
@@ -93,7 +136,8 @@
 
 /* Estilos botón comunes */
 
-.michi-card__actions button {
+.michi-card__actions button,
+.michi-card__btn-repostular {
   width: 100%;
   height: 45px;
   border: none;
@@ -104,7 +148,8 @@
   transition: background-color 0.2s ease;
 }
 
-.michi-card__actions button:hover {
+.michi-card__actions button:hover,
+.michi-card__btn-repostular:hover {
   background-color: var(--color-primary-dark);
 }
 
