@@ -2,6 +2,13 @@ import mongoose from "mongoose";
 import Gato from "../models/Gato.js";
 import Solicitud from "../models/Solicitud.js";
 
+const normalizeText = (text) => {
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+};
+
 const actualizarEstadoGato = async (gatoId) => {
   if (!mongoose.Types.ObjectId.isValid(gatoId)) {
     return;
@@ -270,11 +277,11 @@ export const getSolicitudes = async (req, res) => {
 
     // Filtrar por búsqueda de texto si se proporciona
     if (search) {
-      const searchRegex = new RegExp(search, "i");
+      const normalizedSearch = normalizeText(search);
       solicitudes = solicitudes.filter((s) => {
-        const gatoNombre = s.gato?.nombre || "";
-        const usuarioNombre = s.usuario?.name || "";
-        return searchRegex.test(gatoNombre) || searchRegex.test(usuarioNombre);
+        const gatoNombre = normalizeText(s.gato?.nombre || "");
+        const usuarioNombre = normalizeText(s.usuario?.name || "");
+        return gatoNombre.includes(normalizedSearch) || usuarioNombre.includes(normalizedSearch);
       });
     }
 

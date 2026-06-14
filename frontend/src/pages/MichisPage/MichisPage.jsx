@@ -9,6 +9,13 @@ import { errorAlert } from "../../utils/alerts";
 import "./MichisPages.css";
 import { ChevronLeft, ChevronRight} from "lucide-react";
 
+const normalizeText = (text) => {
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+};
+
 const buildSolicitudResumenMap = (solicitudes) => {
   const map = {};
 

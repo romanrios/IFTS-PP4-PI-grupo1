@@ -5,6 +5,23 @@ import { uploadImage } from "../config/cloudinary.js";
 const getVisibilityFilter = (user) =>
   user?.isAdmin ? {} : { estadoAdopcion: { $ne: "No publicado" } };
 
+const accentInsensitiveRegex = (text) => {
+  const accentMap = {
+    a: "[aáàäâã]",
+    e: "[eéèëê]",
+    i: "[iíìïî]",
+    o: "[oóòöôõ]",
+    u: "[uúùüû]",
+    n: "[nñ]",
+  };
+
+  return text
+    .toLowerCase()
+    .split("")
+    .map((char) => accentMap[char] || char)
+    .join("");
+};
+
 // @desc    Obtener todos los gatos (Para que los adoptantes vean la lista)
 // @route   GET /api/gatos
 export const getGatos = async (req, res) => {
@@ -23,7 +40,8 @@ export const getGatos = async (req, res) => {
     const matchStage = { $match: visibilityFilter };
     
     if (nombre) {
-      matchStage.$match.nombre = { $regex: nombre, $options: "i" };
+      const accentInsensitiveNombre = accentInsensitiveRegex(nombre);
+      matchStage.$match.nombre = { $regex: accentInsensitiveNombre, $options: "i" };
     }
     
     if (estadoAdopcion) {

@@ -7,6 +7,13 @@ import Spinner from "../../components/Spinner/Spinner";
 import { confirmAlert, deleteConfirmAlert, errorAlert, successAlert } from "../../utils/alerts";
 import "./SolicitudesPage.css";
 
+const normalizeText = (text) => {
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+};
+
 function SolicitudesPage() {
   const [searchParams] = useSearchParams();
   const highlightedSolicitudId = searchParams.get("solicitud");
