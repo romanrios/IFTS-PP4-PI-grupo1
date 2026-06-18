@@ -57,12 +57,10 @@ MichiGestión permite administrar el catálogo de gatos disponibles para adopci�
 
 - Node.js
 - Express
-- MongoDB
 - Mongoose
 - JWT
 - Google OAuth
 - Multer
-- Cloudinary
 
 ### Infraestructura
 
