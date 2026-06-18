@@ -155,6 +155,7 @@ backend/
 ├── middleware/
 ├── models/
 ├── routes/
+├── tests/
 └── server.js
 
 frontend/
@@ -194,6 +195,20 @@ frontend/
 - Mensajes de éxito y error.
 - Navegación protegida.
 - Scroll automático entre páginas.
+
+---
+
+## Testing
+
+Se implementaron pruebas automatizadas en el backend utilizando **Jest** para validar las reglas de negocio críticas.
+
+**Ejecución de pruebas:**
+
+```bash
+  cd backend
+  npm test
+```
+
 
 ---
 
