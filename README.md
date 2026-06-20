@@ -2,6 +2,8 @@
 
 <img alt="MichiGestión" src="https://github.com/user-attachments/assets/a792fd79-ed8e-4464-a2d4-c0ff39603035" />
 
+![Mockup de MichiGestión](https://raw.githubusercontent.com/romanrios/IFTS-PP4-PI-grupo1/refs/heads/main/frontend/public/mockup.jpg)
+
 Sistema web para la gestión de adopciones de gatos.
 
 Desarrollado como Proyecto Integrador de Práctica Profesionalizante IV de la Tecnicatura Superior en Desarrollo de Software del Instituto de Formación Técnica Superior N° 29.
