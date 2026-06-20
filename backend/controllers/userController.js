@@ -28,7 +28,7 @@ export const updatePerfilAdoptante = async (req, res) => {
 
 // @desc    Obtener todos los usuarios (Para panel de admin)
 // @route   GET /api/users
-// @access  Público/Privado (según decidan después)
+// @access  Privado
 export const getUsers = async (req, res) => {
   try {
     const users = await User.find({}).select("name email isAdmin");
