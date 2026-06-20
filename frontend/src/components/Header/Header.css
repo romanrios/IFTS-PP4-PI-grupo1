@@ -34,6 +34,7 @@
 .header__logo-texto {
   font-weight: 900;
   font-size: 1.3rem;
+  user-select: none;
 }
 
 .header__user {
