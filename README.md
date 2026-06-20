@@ -6,7 +6,7 @@ Sistema web para la gestión de adopciones de gatos.
 
 Desarrollado como Proyecto Integrador de Práctica Profesionalizante IV de la Tecnicatura Superior en Desarrollo de Software del Instituto de Formación Técnica Superior N° 29.
 
-**Comisión 3A · Grupo 1**
+**Comisión 3A - Grupo 1**
 - Daniel Ignacio Córdoba
 - Mariela Belén Giménez
 - Cecilia Daniela Gómez
@@ -57,12 +57,10 @@ MichiGestión permite administrar el catálogo de gatos disponibles para adopci�
 
 - Node.js
 - Express
-- MongoDB
 - Mongoose
 - JWT
 - Google OAuth
 - Multer
-- Cloudinary
 
 ### Infraestructura
 
@@ -155,6 +153,7 @@ backend/
 ├── middleware/
 ├── models/
 ├── routes/
+├── tests/
 └── server.js
 
 frontend/
@@ -197,10 +196,24 @@ frontend/
 
 ---
 
+## Testing
+
+Se implementaron pruebas automatizadas en el backend utilizando **Jest** para validar las reglas de negocio críticas.
+
+**Ejecución de pruebas:**
+
+```bash
+  cd backend
+  npm test
+```
+
+
+---
+
 **Tecnicatura Superior en Desarrollo de Software**
 
 Instituto de Formación Técnica Superior N.º 29  
 
-Práctica Profesionalizante 4 · Proyecto Integrador
+Práctica Profesionalizante 4 - Proyecto Integrador
 
 Año 2026
