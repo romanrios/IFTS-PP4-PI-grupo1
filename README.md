@@ -209,6 +209,11 @@ Se implementaron pruebas automatizadas en el backend utilizando **Jest** para va
   npm test
 ```
 
+---
+
+## Documentación completa
+
+[Enlace al Documento en Google Drive](https://drive.google.com/file/d/17y3aMVEuuJjIduAMd5HWe6Kdt3ZnwpPl/view?usp=drive_link)
 
 ---
 
